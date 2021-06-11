@@ -1,0 +1,132 @@
+PODS:
+  - Alamofire (5.4.3)
+  - BartyCrouch (4.5.0)
+  - CocoaLumberjack/Core (3.7.2)
+  - CocoaLumberjack/Swift (3.7.2):
+    - CocoaLumberjack/Core
+  - Differentiator (5.0.0)
+  - Moya/Core (15.0.0-alpha.1):
+    - Alamofire (~> 5.0)
+  - Moya/RxSwift (15.0.0-alpha.1):
+    - Moya/Core
+    - RxSwift (~> 6.0)
+  - Nimble (9.2.0)
+  - Quick (3.1.2)
+  - RxBlocking (6.2.0):
+    - RxSwift (= 6.2.0)
+  - RxCocoa (6.2.0):
+    - RxRelay (= 6.2.0)
+    - RxSwift (= 6.2.0)
+  - RxDataSources (5.0.0):
+    - Differentiator (~> 5.0)
+    - RxCocoa (~> 6.0)
+    - RxSwift (~> 6.0)
+  - RxFlow (2.12.2):
+    - RxCocoa (>= 6.0.0)
+    - RxSwift (>= 6.0.0)
+  - RxRelay (6.2.0):
+    - RxSwift (= 6.2.0)
+  - RxSwift (6.2.0)
+  - RxSwiftExt (6.0.1):
+    - RxSwiftExt/Core (= 6.0.1)
+    - RxSwiftExt/RxCocoa (= 6.0.1)
+  - RxSwiftExt/Core (6.0.1):
+    - RxSwift (~> 6.0)
+  - RxSwiftExt/RxCocoa (6.0.1):
+    - RxCocoa (~> 6.0)
+    - RxSwiftExt/Core
+  - RxTest (6.2.0):
+    - RxSwift (= 6.2.0)
+  - SVProgressHUD (2.2.6):
+    - SVProgressHUD/Core (= 2.2.6)
+  - SVProgressHUD/Core (2.2.6)
+  - SwiftGen (6.4.0)
+  - SwiftLint (0.43.1)
+  - Swinject (2.6.0)
+  - SwinjectStoryboard (2.2.0):
+    - Swinject (~> 2.6)
+  - ViewControllerPresentationSpy (5.1.0)
+
+DEPENDENCIES:
+  - BartyCrouch (= 4.5.0)
+  - CocoaLumberjack/Swift (= 3.7.2)
+  - Moya/RxSwift (from `https://github.com/peagasilva/Moya.git`, branch `rxswift-6`)
+  - Nimble (~> 9.0)
+  - Quick (~> 3.1)
+  - RxBlocking (~> 6.0)
+  - RxCocoa (~> 6.0)
+  - RxDataSources (~> 5.0)
+  - RxFlow (~> 2.12)
+  - RxSwift (~> 6.0)
+  - RxSwiftExt (~> 6.0)
+  - RxTest (~> 6.0)
+  - SVProgressHUD (from `https://github.com/SVProgressHUD/SVProgressHUD.git`)
+  - SwiftGen (= 6.4.0)
+  - SwiftLint
+  - Swinject (= 2.6.0)
+  - SwinjectStoryboard (= 2.2.0)
+  - ViewControllerPresentationSpy (~> 5.0)
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - BartyCrouch
+    - CocoaLumberjack
+    - Differentiator
+    - Nimble
+    - Quick
+    - RxBlocking
+    - RxCocoa
+    - RxDataSources
+    - RxFlow
+    - RxRelay
+    - RxSwift
+    - RxSwiftExt
+    - RxTest
+    - SwiftGen
+    - SwiftLint
+    - Swinject
+    - SwinjectStoryboard
+    - ViewControllerPresentationSpy
+
+EXTERNAL SOURCES:
+  Moya:
+    :branch: rxswift-6
+    :git: https://github.com/peagasilva/Moya.git
+  SVProgressHUD:
+    :git: https://github.com/SVProgressHUD/SVProgressHUD.git
+
+CHECKOUT OPTIONS:
+  Moya:
+    :commit: 6bd42b940b32fe2939aefe610430f280aeb24a8d
+    :git: https://github.com/peagasilva/Moya.git
+  SVProgressHUD:
+    :commit: de1d4dba816a19454329031156b8788692bcfa2c
+    :git: https://github.com/SVProgressHUD/SVProgressHUD.git
+
+SPEC CHECKSUMS:
+  Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
+  BartyCrouch: 1c4b60efab0850091e5224cf69afe856f4fe96cd
+  CocoaLumberjack: b7e05132ff94f6ae4dfa9d5bce9141893a21d9da
+  Differentiator: e8497ceab83c1b10ca233716d547b9af21b9344d
+  Moya: 1a04c3836ce1cd20430c176d1318436cbd1371a1
+  Nimble: 4f4a345c80b503b3ea13606a4f98405974ee4d0b
+  Quick: 60f0ea3b8e0cfc0df3259a5c06a238ad8b3c46e0
+  RxBlocking: 0b29f7d2079109a8de49c411381bed7c33ef1eeb
+  RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
+  RxDataSources: aa47cc1ed6c500fa0dfecac5c979b723542d79cf
+  RxFlow: fa434215aca391d10d4d5048c0a035c9502b3666
+  RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
+  RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
+  RxSwiftExt: d61c4b9b06e0a448041b1c659e0f1b5c5a035afc
+  RxTest: 0c692fa672b694373ba86d2b00033595297a2831
+  SVProgressHUD: de812b4f0e1d65358f0064416473174ae619843f
+  SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
+  SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
+  Swinject: 48a96cda93633cf2860697b4ce76ab5db9ebaca2
+  SwinjectStoryboard: 32512ef16c2b0ff5b8f823b23539c4a50f6d3383
+  ViewControllerPresentationSpy: 806584e0413860ee451ec5e513ed4661c39a3727
+
+PODFILE CHECKSUM: 871d7526024a9f4f7d91259991b901f86ad834af
+
+COCOAPODS: 1.10.1

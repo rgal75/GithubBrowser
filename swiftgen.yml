@@ -1,0 +1,15 @@
+strings:
+  inputs: GithubBrowser/hu.lproj/Localizable.strings
+  outputs:
+    templateName: structured-swift5
+    output: GithubBrowser/generated/Strings.swift
+ib:
+  inputs:
+  - GithubBrowser/ui
+  outputs:
+  - templateName: scenes-swift5
+    output: GithubBrowser/generated/StoryboardScenes.swift
+  - templateName: segues-swift5
+    output: GithubBrowser/generated/StoryboardSegues.swift
+  params:
+    ignoreTargetModule: true
