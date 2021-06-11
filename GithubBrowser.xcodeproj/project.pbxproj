@@ -62,11 +62,11 @@
 		2314E8042644292B002DD09C /* MainAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAssembler.swift; sourceTree = "<group>"; };
 		2314E82826455C5E002DD09C /* AppStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStep.swift; sourceTree = "<group>"; };
 		2314E82D26455C8C002DD09C /* RootFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootFlow.swift; sourceTree = "<group>"; };
-		2314E93A2645734E002DD09C /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/Main.strings; sourceTree = "<group>"; };
-		2314E93B26457350002DD09C /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		2314E95E26457676002DD09C /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2314E96726457815002DD09C /* Strings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		234712CF267334FF0053E306 /* LogFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogFormatter.swift; sourceTree = "<group>"; };
+		23FD44CF26739C7400876E63 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
+		23FD44D026739C7500876E63 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		23FD44D126739C7500876E63 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		68F9F63F163EF647268EDBFD /* Pods_GithubBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GithubBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C38545297A0F93312FB003E /* Pods-GithubBrowserUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GithubBrowserUITests.release.xcconfig"; path = "Target Support Files/Pods-GithubBrowserUITests/Pods-GithubBrowserUITests.release.xcconfig"; sourceTree = "<group>"; };
 		985EE20A00B97A6FF5C1B13E /* Pods-GithubBrowser.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GithubBrowser.release.xcconfig"; path = "Target Support Files/Pods-GithubBrowser/Pods-GithubBrowser.release.xcconfig"; sourceTree = "<group>"; };
@@ -325,11 +325,11 @@
 			};
 			buildConfigurationList = 2314E6D1264418E6002DD09C /* Build configuration list for PBXProject "GithubBrowser" */;
 			compatibilityVersion = "Xcode 9.3";
-			developmentRegion = hu;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
-				hu,
+				en,
 			);
 			mainGroup = 2314E6CD264418E6002DD09C;
 			productRefGroup = 2314E6D7264418E6002DD09C /* Products */;
@@ -597,7 +597,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				2314E6E0264418E6002DD09C /* Base */,
-				2314E93A2645734E002DD09C /* hu */,
+				23FD44CF26739C7400876E63 /* en */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -606,7 +606,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				2314E6E5264418E7002DD09C /* Base */,
-				2314E93B26457350002DD09C /* hu */,
+				23FD44D026739C7500876E63 /* en */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -614,7 +614,7 @@
 		2314E95F26457676002DD09C /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				2314E95E26457676002DD09C /* hu */,
+				23FD44D126739C7500876E63 /* en */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
