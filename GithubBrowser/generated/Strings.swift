@@ -15,6 +15,17 @@ internal enum L10n {
     /// GithubBrowser
     internal static let title = L10n.tr("Localizable", "app.title")
   }
+
+  internal enum Repositories {
+    /// 
+    internal static let emptyMessage = L10n.tr("Localizable", "repositories.emptyMessage")
+    /// 
+    internal static let title = L10n.tr("Localizable", "repositories.title")
+    internal enum SearchBar {
+      /// 
+      internal static let placeholder = L10n.tr("Localizable", "repositories.searchBar.placeholder")
+    }
+  }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces

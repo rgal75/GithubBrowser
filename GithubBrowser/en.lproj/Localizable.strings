@@ -6,3 +6,9 @@
   
 */
 "app.title" = "GithubBrowser";
+
+"repositories.emptyMessage" = "No repositories match your search criteria.";
+
+"repositories.searchBar.placeholder" = "Enter search term";
+
+"repositories.title" = "Repositories";

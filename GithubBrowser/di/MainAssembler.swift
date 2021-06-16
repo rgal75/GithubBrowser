@@ -14,10 +14,13 @@ class MainAssembler {
     var resolver: Resolver {
         return assembler.resolver
     }
-    private let assembler = Assembler(container: SwinjectStoryboard.defaultContainer)
+    let container: Container
+    private let assembler: Assembler
 
     // swiftlint:disable force_cast
     private init(withAssembly assembly: Assembly) {
+        container = SwinjectStoryboard.defaultContainer
+        assembler = Assembler(container: container)
         assembler.apply(assembly: assembly)
         DDLogDebug("DI: Assembler instance: \(ObjectIdentifier(assembler).debugDescription)")
     }
@@ -49,6 +52,10 @@ class MainAssembly: Assembly {
 
         container.register(RootFlow.self) { resolver in
             return RootFlow()
+        }.inObjectScope(.transient)
+
+        container.register(RepositoriesViewModelProtocol.self) { resolver in
+            return RepositoriesViewModel()
         }.inObjectScope(.transient)
     }
 }

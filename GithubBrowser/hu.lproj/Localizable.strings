@@ -6,3 +6,9 @@
   
 */
 "app.title" = "GithubBrowser";
+
+"repositories.emptyMessage" = "";
+
+"repositories.searchBar.placeholder" = "";
+
+"repositories.title" = "";

@@ -11,6 +11,7 @@ target 'GithubBrowser' do
   pod 'CocoaLumberjack/Swift', '3.7.2'
   pod 'Swinject', '2.6.0'
   pod 'SwinjectStoryboard', '2.2.0'
+  pod 'InjectPropertyWrapper'
   pod 'RxSwift', '~> 6.0'
   pod 'RxCocoa', '~> 6.0'
   pod 'RxSwiftExt', '~> 6.0'
