@@ -13,6 +13,7 @@ import RxCocoa
 import RxFlow
 import InjectPropertyWrapper
 import RxDataSources
+import Kingfisher
 
 extension GitHubRepositoriesSection: SectionModelType {
   typealias Item = GitHubRepositoryItemType
@@ -68,6 +69,8 @@ class RepositoriesViewController: UIViewController, HasStepper {
 
         repositoriesTable.backgroundView = emptyStateView
         emptyStateLabel.text = ""
+        repositoriesTable.rowHeight = UITableView.automaticDimension
+        repositoriesTable.estimatedRowHeight = 120
         repositoriesTable.removeEmptyBottomCells()
     }
 
@@ -100,6 +103,15 @@ class RepositoriesViewController: UIViewController, HasStepper {
                         preconditionFailure("Failed to dequeue \(RepositoryCell.self).")
                     }
                     repositoryCell.fullNameLabel?.text = repository.fullName
+                    repositoryCell.descriptionLabel?.text = repository.description
+                    repositoryCell.starsLabel?.text = "\(repository.stargazersCount)"
+                    repositoryCell.languageLabel?.text = repository.language
+                    repositoryCell.loginLabel?.text = repository.owner?.login
+                    if let avatarUrlString = repository.owner?.avatarUrlString,
+                       let avatarUrl = URL(string: avatarUrlString) {
+                        repositoryCell.avatarImageView.kf.setImage(
+                            with: avatarUrl)
+                    }
                     cell = repositoryCell
                 case .nextPageIndicator:
                     guard let nextPageIndicatorCell = tableView.dequeueReusableCell(

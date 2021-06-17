@@ -18,6 +18,7 @@ target 'GithubBrowser' do
   pod 'RxDataSources', '~> 5.0'
   pod 'Moya/RxSwift', :git => 'https://github.com/peagasilva/Moya.git', :branch => 'rxswift-6' #'14.0.0'
   pod 'RxFlow', '~> 2.12'
+  pod 'Kingfisher'
   pod 'SVProgressHUD', :git => 'https://github.com/SVProgressHUD/SVProgressHUD.git'
 
   target 'GithubBrowserTests' do

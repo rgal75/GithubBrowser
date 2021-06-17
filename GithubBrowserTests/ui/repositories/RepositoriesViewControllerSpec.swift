@@ -52,12 +52,20 @@ class RepositoriesViewControllerSpec: QuickSpec {
             func verifyRepositoryCell(
                 at row: Int,
                 toHaveFullName expectedFullName: String,
+                description expectedDescription: String,
+                starsCount expectedStarsCount: String,
+                language expectedLanguage: String,
+                login expectedLogin: String,
                 file: FileString = #file,
                 line: UInt = #line) {
                 guard let cell = sut.repositoriesTable.cellForRow(at: IndexPath(row: row, section: 0)) as? RepositoryCell else {
                     return fail("Expected a \(RepositoryCell.self), got something else.", file: file, line: line)
                 }
                 expect(file: file, line: line, cell.fullNameLabel.text).to(equal(expectedFullName))
+                expect(file: file, line: line, cell.descriptionLabel.text).to(equal(expectedDescription))
+                expect(file: file, line: line, cell.starsLabel.text).to(equal(expectedStarsCount))
+                expect(file: file, line: line, cell.languageLabel.text).to(equal(expectedLanguage))
+                expect(file: file, line: line, cell.loginLabel.text).to(equal(expectedLogin))
             }
 
             func verifyNextPageIndicatorCell(
@@ -98,6 +106,8 @@ class RepositoriesViewControllerSpec: QuickSpec {
                 }
                 it("has a table view for repositories") {
                     expect(sut.repositoriesTable).toNot(beNil())
+                    expect(sut.repositoriesTable.rowHeight).to(equal(UITableView.automaticDimension))
+                    expect(sut.repositoriesTable.estimatedRowHeight).to(equal(120))
                 }
                 it("""
                     has a view to represent the empty state of the repositories table
@@ -178,8 +188,20 @@ class RepositoriesViewControllerSpec: QuickSpec {
                         along with a next-page-indicator cell
                         """) {
                         verifyRepositoriesTableRowCountIs(3)
-                        verifyRepositoryCell(at: 0, toHaveFullName: "Repo-1")
-                        verifyRepositoryCell(at: 1, toHaveFullName: "Repo-2")
+                        verifyRepositoryCell(
+                            at: 0,
+                            toHaveFullName: "Repo-1",
+                            description: "Repo-1-desc",
+                            starsCount: "1",
+                            language: "Repo-1-lang",
+                            login: "Repo-1-owner")
+                        verifyRepositoryCell(
+                            at: 1,
+                            toHaveFullName: "Repo-2",
+                            description: "Repo-2-desc",
+                            starsCount: "2",
+                            language: "Repo-2-lang",
+                            login: "Repo-2-owner")
                         verifyNextPageIndicatorCell(at: 2)
                     }
                 }
