@@ -23,7 +23,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         InjectSettings.resolver = assembler.container
         setupLogging()
         showRootViewController()
-        // TODO theme.apply(for: application)
         DDLogDebug("Application started")
         return true
     }

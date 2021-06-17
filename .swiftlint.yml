@@ -7,8 +7,8 @@ disabled_rules: # rule identifiers to exclude from running
     - superfluous_disable_command
     - empty_enum_arguments
 function_body_length:
-    - 45 # warning
-    - 60 # error
+    - 65 # warning
+    - 90 # error
 type_body_length:
     - 350 # warning
     - 400 # error

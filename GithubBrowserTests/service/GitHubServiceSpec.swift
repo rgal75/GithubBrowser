@@ -13,6 +13,8 @@ import Swinject
 import Moya
 import InjectPropertyWrapper
 
+// swiftlint:disable large_tuple
+
 private var searchRepositoriesParameters: (q: String?, perPage: Int?, page: Int?)?
 private var expectedSearchRepositoriesResponse: EndpointSampleResponse =
     .networkResponse(502, Data())

@@ -15,7 +15,7 @@ import RxSwift
 import RxCocoa
 import InjectPropertyWrapper
 
-// swiftlint:disable file_length
+// swiftlint:disable file_length function_parameter_count
 class RepositoriesViewControllerSpec: QuickSpec {
     
     // swiftlint:disable function_body_length

@@ -9,6 +9,7 @@
 import RxSwift
 import Nimble
 
+// swiftlint:disable large_tuple
 class MockGitHubServiceBase: GitHubServiceProtocol {
 
     var invokedFindRepositories = false
