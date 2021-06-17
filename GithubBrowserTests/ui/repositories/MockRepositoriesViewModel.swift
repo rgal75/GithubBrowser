@@ -34,6 +34,16 @@ class MockRepositoriesViewModelBase: RepositoriesViewModelProtocol {
         return stubbedLoadNextPage
     }
 
+    var invokedRepositorySelectedGetter = false
+    var invokedRepositorySelectedGetterCount = 0
+    var stubbedRepositorySelected: PublishRelay<GitHubRepository>!
+
+    var repositorySelected: PublishRelay<GitHubRepository> {
+        invokedRepositorySelectedGetter = true
+        invokedRepositorySelectedGetterCount += 1
+        return stubbedRepositorySelected
+    }
+
     var invokedRepositoriesGetter = false
     var invokedRepositoriesGetterCount = 0
     var stubbedRepositories: Observable<GitHubRepositoriesSection>!
@@ -91,6 +101,12 @@ class MockRepositoriesViewModel: MockRepositoriesViewModelBase {
             self?.triggeredLoadNextPageCount += 1
         }).disposed(by: disposeBag)
 
+        stubbedRepositorySelected = PublishRelay<GitHubRepository>()
+        stubbedRepositorySelected.subscribe(onNext: { [weak self] (repo: GitHubRepository) in
+            self?.triggeredRepositorySelectedCount += 1
+            self?.stubbedRepositorySelectedLastTriggerValue = repo
+        }).disposed(by: disposeBag)
+
         stubbedRepositories = stubbedRepositoriesSubject.asObservable()
         stubbedSteps = PublishRelay<Step>()
         stubbedInitialStep = RxFlowStep.home
@@ -128,6 +144,24 @@ class MockRepositoriesViewModel: MockRepositoriesViewModelBase {
         line: UInt = #line) {
         expect(file: file, line: line, self.triggeredLoadNextPageCount)
             .to(equal(triggerCount))
+    }
+
+    // MARK: - repositorySelected
+
+    private var triggeredRepositorySelectedCount = 0
+    private var stubbedRepositorySelectedLastTriggerValue: GitHubRepository?
+    func verifyRepositorySelectedTriggered(
+        times triggerCount: Int = 1,
+        withRepository expectedRepository: GitHubRepository? = nil,
+        file: FileString = #file,
+        line: UInt = #line) {
+        expect(file: file, line: line, self.triggeredRepositorySelectedCount)
+            .to(equal(triggerCount))
+        if triggerCount > 0 {
+            expect(file: file, line: line, self.stubbedRepositorySelectedLastTriggerValue)
+                .to(equal(expectedRepository))
+
+        }
     }
 
     // MARK: - repositories

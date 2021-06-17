@@ -203,6 +203,7 @@ class GitHubServiceSpec: QuickSpec {
                         expect(emittedRepository.stargazersCount).to(equal(1021))
                         expect(emittedRepository.owner?.login).to(equal("RxSwiftCommunity"))
                         expect(emittedRepository.owner?.avatarUrlString).to(equal("https://avatars.githubusercontent.com/u/15903991?v=4"))
+                        expect(emittedRepository.htmlUrlString).to(equal("https://github.com/RxSwiftCommunity/RxRealm"))
                     }
                 }
 

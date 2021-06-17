@@ -6,6 +6,7 @@
 //
 
 import RxSwift
+import RxSwiftExt
 import RxRelay
 import RxFlow
 import InjectPropertyWrapper
@@ -26,6 +27,7 @@ protocol RepositoriesViewModelProtocol: Stepper {
     // MARK: - Input
     var searchTerm: PublishRelay<String> { get }
     var loadNextPage: PublishRelay<Void> { get }
+    var repositorySelected: PublishRelay<GitHubRepository> { get }
 
     // MARK: - Output
     var repositories: Observable<GitHubRepositoriesSection> { get }
@@ -38,6 +40,7 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
     // MARK: - Input
     var searchTerm = PublishRelay<String>()
     var loadNextPage = PublishRelay<Void>()
+    var repositorySelected = PublishRelay<GitHubRepository>()
 
     // MARK: - Output
     var repositories: Observable<GitHubRepositoriesSection> = .never()
@@ -103,5 +106,15 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
             })
             .retry()
             .share(replay: 1)
+
+        repositorySelected
+            .filterMap({ (repository: GitHubRepository) -> FilterMap<Step> in
+                guard let repoUrl = URL(string: repository.htmlUrlString) else {
+                    return .ignore
+                }
+                return .map(AppStep.safariViewRequested(url: repoUrl))
+            })
+            .bind(to: steps)
+            .disposed(by: disposeBag)
     }
 }

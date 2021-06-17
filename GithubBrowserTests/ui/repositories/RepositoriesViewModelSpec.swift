@@ -66,6 +66,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                                             description: "any",
                                             language: "any",
                                             stargazersCount: 1,
+                                            htmlUrlString: "any",
                                             owner: Owner(login: "any", avatarUrlString: "any")))
                 }
                 return GitHubSearchResult(totalCount: totalCount, repositories: repositories)
@@ -219,6 +220,22 @@ class RepositoriesViewModelSpec: QuickSpec {
                         expect(secondEmission.searchTerm).to(equal("abc"))
                         expect(secondEmission.numPages).to(equal(2))
                         expect(secondEmission.items).to(haveCount(20))
+                    }
+                }
+
+                context("when the client tells that a repository was selected") {
+                    beforeEach {
+                        sut.repositorySelected.accept(GitHubRepository(
+                                                        fullName: "Repo-1",
+                                                        description: "Repo-1-desc",
+                                                        language: "Repo-1-lang",
+                                                        stargazersCount: 1,
+                                                        htmlUrlString: "Repo-1-url",
+                                                        owner: Owner(login: "Repo-1-owner", avatarUrlString: "Repo-1-avatar-url")))
+                    }
+                    it("requests to the repository in a Safari view") {
+                        expect(emittedFlowSteps).to(haveCount(1))
+                        expect(emittedFlowSteps.last).to(equal(AppStep.safariViewRequested(url: URL(string: "Repo-1-url")!)))
                     }
                 }
             }

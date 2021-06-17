@@ -9,8 +9,8 @@ import RxSwift
 import RxRelay
 
 enum AppStep: Step, Equatable {
-    // Global
     case initialViewRequested
+    case safariViewRequested(url: URL)
 
     case alert(AlertDetails)
 }

@@ -84,6 +84,7 @@ class RepositoriesViewControllerSpec: QuickSpec {
                     description: "any",
                     language: "any",
                     stargazersCount: 1,
+                    htmlUrlString: "any",
                     owner: Owner(login: "any", avatarUrlString: "any"))
             }
 
@@ -104,10 +105,15 @@ class RepositoriesViewControllerSpec: QuickSpec {
                 it("has `Enter search term` as placeholder in the search bar") {
                     expect(sut.searchBar.placeholder).to(equal("Enter search term"))
                 }
-                it("has a table view for repositories") {
+                it("""
+                    has a table view for repositories configured
+                    for dynamic row heights
+                    and to dismiss the keyboard on drag
+                    """) {
                     expect(sut.repositoriesTable).toNot(beNil())
                     expect(sut.repositoriesTable.rowHeight).to(equal(UITableView.automaticDimension))
                     expect(sut.repositoriesTable.estimatedRowHeight).to(equal(120))
+                    expect(sut.repositoriesTable.keyboardDismissMode).to(equal(UIScrollView.KeyboardDismissMode.onDrag))
                 }
                 it("""
                     has a view to represent the empty state of the repositories table
@@ -161,24 +167,28 @@ class RepositoriesViewControllerSpec: QuickSpec {
                 }
 
                 context("when the view model emits a list of repositories with a next-page indicator") {
+                    var repository1: GitHubRepository!
                     beforeEach {
+                        repository1 = GitHubRepository(
+                            fullName: "Repo-1",
+                            description: "Repo-1-desc",
+                            language: "Repo-1-lang",
+                            stargazersCount: 1,
+                            htmlUrlString: "Repo-1-url",
+                            owner: Owner(login: "Repo-1-owner", avatarUrlString: "Repo-1-avatar-url"))
                         mockViewModel.expectRepositoriesToEmit(
                             GitHubRepositoriesSection(
                                 searchTerm: "any",
                                 numPages: 1,
                                 totalPages: 2,
                                 items: [
-                                    .repository(GitHubRepository(
-                                                    fullName: "Repo-1",
-                                                    description: "Repo-1-desc",
-                                                    language: "Repo-1-lang",
-                                                    stargazersCount: 1,
-                                                    owner: Owner(login: "Repo-1-owner", avatarUrlString: "Repo-1-avatar-url"))),
+                                    .repository(repository1),
                                     .repository(GitHubRepository(
                                                     fullName: "Repo-2",
                                                     description: "Repo-2-desc",
                                                     language: "Repo-2-lang",
                                                     stargazersCount: 2,
+                                                    htmlUrlString: "Repo-2-url",
                                                     owner: Owner(login: "Repo-2-owner", avatarUrlString: "Repo-2-avatar-url"))),
                                     .nextPageIndicator
                                 ]))
@@ -203,6 +213,17 @@ class RepositoriesViewControllerSpec: QuickSpec {
                             language: "Repo-2-lang",
                             login: "Repo-2-owner")
                         verifyNextPageIndicatorCell(at: 2)
+                    }
+
+                    context("when the user selects a repository") {
+                        beforeEach {
+                            sut.repositoriesTable.delegate?.tableView?(
+                                sut.repositoriesTable, didSelectRowAt: IndexPath(row: 0, section: 0))
+                        }
+                        it("sends the selected repository the view model") {
+                            mockViewModel.verifyRepositorySelectedTriggered(
+                                withRepository: repository1)
+                        }
                     }
                 }
 

@@ -12,6 +12,7 @@ struct GitHubRepository: Equatable, Decodable {
     var description: String? = ""
     var language: String? = ""
     var stargazersCount: Int
+    var htmlUrlString: String
     var owner: Owner?
 
     enum CodingKeys: String, CodingKey {
@@ -19,6 +20,7 @@ struct GitHubRepository: Equatable, Decodable {
         case description = "description"
         case language = "language"
         case stargazersCount = "stargazers_count"
+        case htmlUrlString = "html_url"
         case owner = "owner"
     }
 }

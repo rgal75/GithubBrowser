@@ -65,7 +65,7 @@ class RepositoriesViewController: UIViewController, HasStepper {
         navigationItem.searchController = searchController
         navigationItem.title = L10n.Repositories.title
         navigationItem.hidesSearchBarWhenScrolling = false
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.prefersLargeTitles = false
 
         repositoriesTable.backgroundView = emptyStateView
         emptyStateLabel.text = ""
@@ -125,6 +125,17 @@ class RepositoriesViewController: UIViewController, HasStepper {
 
                 return cell ?? UITableViewCell()
             })
+
+        repositoriesTable.rx.modelSelected(GitHubRepositoryItemType.self)
+            .filterMap({ (repositoryItem: GitHubRepositoryItemType) -> FilterMap<GitHubRepository> in
+                guard case let GitHubRepositoryItemType.repository(repository) = repositoryItem else {
+                    return .ignore
+                }
+                return .map(repository)
+            })
+            .bind(to: viewModel.repositorySelected)
+            .disposed(by: disposeBag)
+
         viewModel.repositories
             .map({[$0]})
             .bind(to: repositoriesTable.rx.items(dataSource: repositoriesDataSource))

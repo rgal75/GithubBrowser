@@ -13,6 +13,7 @@ import Swinject
 import RxFlow
 import InjectPropertyWrapper
 import ViewControllerPresentationSpy
+import SafariServices
 
 // swiftlint:disable file_length
 class RootFlowSpec: QuickSpec {
@@ -64,6 +65,26 @@ class RootFlowSpec: QuickSpec {
                     it("shows the \(RepositoriesViewController.self)") {
                         // then
                         expect(sut.rootVC.topViewController).to(beAnInstanceOf(RepositoriesViewController.self))
+                    }
+                }
+
+                context("when presenting the Safari view is requested") {
+                    var presentationVerifier: PresentationVerifier!
+                    beforeEach {
+                        presentationVerifier = PresentationVerifier()
+                        testStepper.triggerStep(AppStep.safariViewRequested(url: URL(string: "https://google.com")!))
+                    }
+
+                    afterEach {
+                        presentationVerifier = nil
+                    }
+
+                    it("shows the \(SFSafariViewController.self)") {
+                        // then
+                        let presentedVC: SFSafariViewController? = presentationVerifier.verify(
+                            animated: true,
+                            presentingViewController: sut.rootVC)
+                        expect(presentedVC).to(beAnInstanceOf(SFSafariViewController.self))
                     }
                 }
 
