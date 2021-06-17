@@ -74,7 +74,6 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
                 } else {
                     repositories$ = gitHubService.findRepositories(
                         withSearchTerm: searchTerm, page: nextPage, pageSize: REPOSITORIES_PAGE_SIZE)
-                        .debug(">>> findRepositories")
                         .map({ (searchResult: GitHubSearchResult) -> [GitHubRepositoryItemType] in
                             totalPageCount = searchResult.totalCount
                             return searchResult.repositories.map { repo -> GitHubRepositoryItemType in

@@ -72,6 +72,7 @@ class RepositoriesViewController: UIViewController, HasStepper {
         repositoriesTable.rowHeight = UITableView.automaticDimension
         repositoriesTable.estimatedRowHeight = 120
         repositoriesTable.removeEmptyBottomCells()
+        repositoriesTable.keyboardDismissMode = .onDrag
     }
 
     private func bindToViewModel() {
@@ -110,7 +111,7 @@ class RepositoriesViewController: UIViewController, HasStepper {
                     if let avatarUrlString = repository.owner?.avatarUrlString,
                        let avatarUrl = URL(string: avatarUrlString) {
                         repositoryCell.avatarImageView.kf.setImage(
-                            with: avatarUrl)
+                            with: avatarUrl, placeholder: UIImage(systemName: "questionmark.circle"))
                     }
                     cell = repositoryCell
                 case .nextPageIndicator:

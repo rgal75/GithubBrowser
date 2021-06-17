@@ -83,8 +83,8 @@ func alertDetails(from error: Error) -> AlertDetails? {
 }
 
 func apiError(fromError error: Error) -> GitHubBrowserError {
-    if let eKretaError = error as? GitHubBrowserError {
-        return eKretaError
+    if let gitHubBrowserError = error as? GitHubBrowserError {
+        return gitHubBrowserError
     }
     var result: GitHubBrowserError
     switch error {

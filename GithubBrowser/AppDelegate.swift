@@ -17,7 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private let assembler = MainAssembler.create(withAssembly: MainAssembly())
     private var coordinator = FlowCoordinator()
     private let disposeBag = DisposeBag()
-    // TODO private let theme = EteleTheme()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
