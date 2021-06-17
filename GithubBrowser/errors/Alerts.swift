@@ -95,8 +95,6 @@ func apiError(fromError error: Error) -> GitHubBrowserError {
     case let nsError as NSError:
         if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorNotConnectedToInternet {
             result = .disconnected
-        } else if nsError.code == NSURLErrorTimedOut {
-            result = .timeout
         } else {
             result = .unexpectedError
         }

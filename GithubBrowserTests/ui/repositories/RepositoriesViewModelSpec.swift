@@ -14,6 +14,7 @@ import RxCocoa
 import RxSwift
 import InjectPropertyWrapper
 import RxFlow
+import RxTest
 
 // swiftlint:disable file_length
 class RepositoriesViewModelSpec: QuickSpec {
@@ -23,6 +24,7 @@ class RepositoriesViewModelSpec: QuickSpec {
         describe("RepositoriesViewModel") {
             var sut: RepositoriesViewModel!
             var mockGitHubService: MockGitHubService!
+            var testScheduler: TestScheduler!
             var disposeBag: DisposeBag!
             var assembler: MainAssembler!
 
@@ -34,6 +36,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                 InjectSettings.resolver = assembler.container
                 sut = assembler.resolver.resolve(RepositoriesViewModel.self)
                 mockGitHubService = assembler.resolver.resolve(GitHubServiceProtocol.self) as? MockGitHubService
+                testScheduler = assembler.resolver.resolve(SchedulerType.self) as? TestScheduler
                 disposeBag = DisposeBag()
 
                 emittedRepositoriesSectionList.removeAll()
@@ -72,6 +75,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                 context("when the client sends an empty search term") {
                     beforeEach {
                         sut.searchTerm.accept("")
+                        testScheduler.advanceTo(1000)
                     }
                     it("emits an empty section") {
                         expect(emittedRepositoriesSectionList).to(haveCount(1))
@@ -79,9 +83,23 @@ class RepositoriesViewModelSpec: QuickSpec {
                     }
                 }
 
+                context("when the client starts typing a search term quickly") {
+                    beforeEach {
+                        sut.searchTerm.accept("a")
+                        sut.searchTerm.accept("ab")
+                        sut.searchTerm.accept("abc")
+                        testScheduler.advanceTo(601)
+                    }
+                    it("starts querying GitHub only if the user stops typing for at least 500 ms") {
+                        mockGitHubService.verifyFindRepositoriesCalled(
+                            times: 1, withSearchTerm: "abc", page: 1, pageSize: 15)
+                    }
+                }
+
                 context("when the client sends a search term") {
                     beforeEach {
                         sut.searchTerm.accept("abc")
+                        testScheduler.advanceTo(1000)
                     }
                     it("queries GitHub the first 15 matching repositories") {
                         mockGitHubService.verifyFindRepositoriesCalled(
@@ -98,6 +116,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                         mockGitHubService.expectFindRepositoriesToFail(
                             withError: GitHubBrowserError.unexpectedError)
                         sut.searchTerm.accept("abc")
+                        testScheduler.advanceTo(1000)
                     }
                     it("requests to show an error alert") {
                         expect(emittedFlowSteps.last).to(equal(.alert(expectedAlertDetails)))
@@ -115,6 +134,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                         }
                         it("continues listening search requests") {
                             sut.searchTerm.accept("abc")
+                            testScheduler.advanceTo(2001)
                             mockGitHubService.verifyFindRepositoriesCalled(
                                 times: 2, withSearchTerm: "abc", page: 1, pageSize: 15)
                         }
@@ -129,6 +149,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                         mockGitHubService.expectFindRepositoriesToEmit(
                             stubSearchResult(withTotalItemCount: 5, pageCount: 1))
                         sut.searchTerm.accept("abc")
+                        testScheduler.advanceTo(1000)
                     }
                     it("emits a section of repositories without next-page-indicator") {
                         guard emittedRepositoriesSectionList.count == 1 else {
@@ -150,6 +171,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                         mockGitHubService.expectFindRepositoriesToEmit(
                             stubSearchResult(withTotalItemCount: 20, pageCount: 15))
                         sut.searchTerm.accept("abc")
+                        testScheduler.advanceTo(1000)
                     }
                     it("emits a section of repositories with a next-page-indicator") {
                         guard emittedRepositoriesSectionList.count == 1 else {
@@ -171,6 +193,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                         mockGitHubService.expectFindRepositoriesToEmit(
                             stubSearchResult(withTotalItemCount: 20, pageCount: 15))
                         sut.searchTerm.accept("abc")
+                        testScheduler.advanceTo(1000)
                         mockGitHubService.expectFindRepositoriesToEmit(
                             stubSearchResult(withTotalItemCount: 20, pageCount: 5))
                         sut.loadNextPage.accept(())
@@ -213,6 +236,10 @@ extension RepositoriesViewModelSpec {
 
             container.register(GitHubServiceProtocol.self) { _ in
                 return MockGitHubService()
+            }.inObjectScope(.container)
+
+            container.register(SchedulerType.self) { _ in
+                return TestScheduler(initialClock: 0, resolution: 0.001)
             }.inObjectScope(.container)
         }
     }

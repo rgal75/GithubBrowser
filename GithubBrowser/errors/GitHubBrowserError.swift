@@ -14,7 +14,6 @@ enum GitHubBrowserError: Error, Equatable {
     case disconnected
     case serviceNotAvailable
     case validationFailed
-    case timeout
     /// An error that we cannot really recover from.
     case unexpectedError
 }

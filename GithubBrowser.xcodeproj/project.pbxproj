@@ -41,6 +41,7 @@
 		23DC80CB267B233D00221259 /* GitHubSearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23DC80CA267B233D00221259 /* GitHubSearchResult.swift */; };
 		23DC80CD267B239400221259 /* GitHubRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23DC80CC267B239400221259 /* GitHubRepository.swift */; };
 		23DC80CF267B481700221259 /* HasStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23DC80CE267B481700221259 /* HasStepper.swift */; };
+		23DC80D2267B646B00221259 /* ErrorConvertSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23DC80D1267B646B00221259 /* ErrorConvertSpec.swift */; };
 		23FD44D72673A5DF00876E63 /* RepositoriesViewControllerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23FD44D62673A5DF00876E63 /* RepositoriesViewControllerSpec.swift */; };
 		23FD44DA2673A61D00876E63 /* StoryboardSegues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23FD44D82673A61D00876E63 /* StoryboardSegues.swift */; };
 		23FD44DB2673A61D00876E63 /* StoryboardScenes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23FD44D92673A61D00876E63 /* StoryboardScenes.swift */; };
@@ -110,6 +111,7 @@
 		23DC80CA267B233D00221259 /* GitHubSearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubSearchResult.swift; sourceTree = "<group>"; };
 		23DC80CC267B239400221259 /* GitHubRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubRepository.swift; sourceTree = "<group>"; };
 		23DC80CE267B481700221259 /* HasStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HasStepper.swift; sourceTree = "<group>"; };
+		23DC80D1267B646B00221259 /* ErrorConvertSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorConvertSpec.swift; sourceTree = "<group>"; };
 		23FD44CF26739C7400876E63 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		23FD44D026739C7500876E63 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		23FD44D126739C7500876E63 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -209,6 +211,7 @@
 				23FD44D42673A5B200876E63 /* ui */,
 				23380DE82677318E00B4F0BE /* flow */,
 				233AF0D2267A124A0056E7F7 /* service */,
+				23DC80D0267B643A00221259 /* errors */,
 				23380DED2677344500B4F0BE /* test-helper */,
 				2314E6F0264418E8002DD09C /* GithubBrowserTests.swift */,
 				2314E6F2264418E8002DD09C /* Info.plist */,
@@ -339,6 +342,14 @@
 				23DC80CC267B239400221259 /* GitHubRepository.swift */,
 			);
 			path = model;
+			sourceTree = "<group>";
+		};
+		23DC80D0267B643A00221259 /* errors */ = {
+			isa = PBXGroup;
+			children = (
+				23DC80D1267B646B00221259 /* ErrorConvertSpec.swift */,
+			);
+			path = errors;
 			sourceTree = "<group>";
 		};
 		23FD44D32673A5A200876E63 /* repositories */ = {
@@ -747,6 +758,7 @@
 				23DC80C8267B1C0000221259 /* GitHubServiceSpec.swift in Sources */,
 				23380DEF2677346200B4F0BE /* TestHelper+UI.swift in Sources */,
 				2314E6F1264418E8002DD09C /* GithubBrowserTests.swift in Sources */,
+				23DC80D2267B646B00221259 /* ErrorConvertSpec.swift in Sources */,
 				233AF0D7267A13130056E7F7 /* MockGitHubService.swift in Sources */,
 				2314E751264423F5002DD09C /* TestingAppDelegate.swift in Sources */,
 				23FD44D72673A5DF00876E63 /* RepositoriesViewControllerSpec.swift in Sources */,

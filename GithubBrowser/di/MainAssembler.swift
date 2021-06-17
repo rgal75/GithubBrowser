@@ -8,6 +8,7 @@ import Swinject
 import SwinjectStoryboard
 import Moya
 import CocoaLumberjack
+import RxSwift
 
 class MainAssembler {
     public static var instance: MainAssembler! = nil
@@ -73,5 +74,9 @@ class MainAssembly: Assembly {
                     configuration: NetworkLoggerPlugin.Configuration(logOptions: .verbose))
             ])
         }.inObjectScope(.container)
+
+        container.register(SchedulerType.self) { _ in
+            return MainScheduler.instance
+        }.inObjectScope(.transient)
     }
 }

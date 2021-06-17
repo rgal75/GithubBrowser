@@ -45,12 +45,14 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
     // MARK: - Internal
     var steps = PublishRelay<Step>()
     @Inject private var gitHubService: GitHubServiceProtocol
+    @Inject var typingScheduler: SchedulerType
     private var disposeBag = DisposeBag()
 
     init() {
         let gitHubService = self.gitHubService
 
         let firstPageRequest$: Observable<GitHubRepositoriesSection> = searchTerm
+            .debounce(.milliseconds(600), scheduler: typingScheduler)
             .map({ (searchTerm: String) -> GitHubRepositoriesSection in
                 return GitHubRepositoriesSection(
                     searchTerm: searchTerm, numPages: 0, totalPages: 0, items: [])
