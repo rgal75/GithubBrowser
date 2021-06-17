@@ -117,10 +117,11 @@ class RepositoriesViewControllerSpec: QuickSpec {
                 }
                 it("""
                     has a view to represent the empty state of the repositories table
-                    with an empty message
+                    with an empty message and a hidden loading indicator
                     """) {
                     expect(sut.repositoriesTable.backgroundView).to(be(sut.emptyStateView))
                     expect(sut.emptyStateLabel.text).to(beEmpty())
+                    expect(sut.loadingIndicator.isHidden).to(beTrue())
                 }
                 it("sends an empty search term to the view model") {
                     mockViewModel.verifySearchTermTriggered(
@@ -242,6 +243,42 @@ class RepositoriesViewControllerSpec: QuickSpec {
                     }
                     it("requests the view model to load the next page") {
                         mockViewModel.verifyLoadNextPageTriggered()
+                    }
+                }
+
+                context("""
+                    given that the loading indicator is hidden,
+                    when the view model requests to show the loading indicator
+                    """) {
+                    beforeEach {
+                        // given
+                        sut.loadingIndicator.isHidden = true
+                        sut.loadingIndicator.startAnimating()
+                        // when
+                        mockViewModel.expectShowLoadingToEmit(true)
+                    }
+                    it("shows the loading indicator and hides the empty state message") {
+                        expect(sut.loadingIndicator.isHidden).to(beFalse())
+                        expect(sut.loadingIndicator.isAnimating).to(beTrue())
+                        expect(sut.emptyStateLabel.isHidden).to(beTrue())
+                    }
+                }
+
+                context("""
+                    given that the loading indicator is shown,
+                    when the view model requests to hide the loading indicator
+                    """) {
+                    beforeEach {
+                        // given
+                        sut.loadingIndicator.isHidden = false
+                        sut.loadingIndicator.stopAnimating()
+                        // when
+                        mockViewModel.expectShowLoadingToEmit(false)
+                    }
+                    it("hides the loading indicator and shows the emtpy state message") {
+                        expect(sut.loadingIndicator.isHidden).to(beTrue())
+                        expect(sut.loadingIndicator.isAnimating).to(beFalse())
+                        expect(sut.emptyStateLabel.isHidden).to(beFalse())
                     }
                 }
             }

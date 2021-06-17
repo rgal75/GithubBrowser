@@ -28,7 +28,8 @@ class RepositoriesViewController: UIViewController, HasStepper {
     @IBOutlet weak var repositoriesTable: UITableView!
     @IBOutlet weak var emptyStateView: UIView!
     @IBOutlet weak var emptyStateLabel: UILabel!
-
+    @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
+    
     @Inject var viewModel: RepositoriesViewModelProtocol!
     var disposeBag = DisposeBag()
 
@@ -69,6 +70,7 @@ class RepositoriesViewController: UIViewController, HasStepper {
 
         repositoriesTable.backgroundView = emptyStateView
         emptyStateLabel.text = ""
+        loadingIndicator.isHidden = true
         repositoriesTable.rowHeight = UITableView.automaticDimension
         repositoriesTable.estimatedRowHeight = 120
         repositoriesTable.removeEmptyBottomCells()
@@ -147,6 +149,20 @@ class RepositoriesViewController: UIViewController, HasStepper {
             .drive(onNext: { [weak self] (empty: Bool) in
                 self?.setEmptyState(empty, withMessage: L10n.Repositories.emptyMessage)
             }).disposed(by: disposeBag)
+
+        viewModel.showLoading
+            .map({!$0})
+            .asDriver(onErrorJustReturn: false)
+            .do(onNext: { [weak self] hideLoading in
+                if hideLoading {
+                    self?.loadingIndicator.stopAnimating()
+                    self?.emptyStateLabel.isHidden = false
+                } else {
+                    self?.loadingIndicator.startAnimating()
+                    self?.emptyStateLabel.isHidden = true
+                }
+            })
+            .drive(loadingIndicator.rx.isHidden).disposed(by: disposeBag)
     }
 
     private func setEmptyState(_ empty: Bool, withMessage message: String) {

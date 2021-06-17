@@ -31,6 +31,7 @@ protocol RepositoriesViewModelProtocol: Stepper {
 
     // MARK: - Output
     var repositories: Observable<GitHubRepositoriesSection> { get }
+    var showLoading: Observable<Bool> { get }
 }
 
 private let REPOSITORIES_PAGE_SIZE = 15
@@ -44,6 +45,7 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
 
     // MARK: - Output
     var repositories: Observable<GitHubRepositoriesSection> = .never()
+    var showLoading: Observable<Bool> = .never()
 
     // MARK: - Internal
     var steps = PublishRelay<Step>()
@@ -54,12 +56,17 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
     init() {
         let gitHubService = self.gitHubService
 
+        let showLoadingSubject = PublishSubject<Bool>()
+        showLoading = showLoadingSubject.asObservable()
+
         let firstPageRequest$: Observable<GitHubRepositoriesSection> = searchTerm
             .debounce(.milliseconds(600), scheduler: typingScheduler)
             .map({ (searchTerm: String) -> GitHubRepositoriesSection in
                 return GitHubRepositoriesSection(
                     searchTerm: searchTerm, numPages: 0, totalPages: 0, items: [])
             })
+            .do(onNext: { _ in showLoadingSubject.onNext(true) })
+
         let nextPageRequest$: Observable<GitHubRepositoriesSection> = Observable.deferred { [weak self] in
             guard let self = self else { return .never() }
             return self.loadNextPage
@@ -104,6 +111,9 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
                             items: repositoryItems)
                     })
             })
+            .do(
+                onNext: { _ in showLoadingSubject.onNext(false)},
+                onError: { _ in showLoadingSubject.onNext(false)})
             .retry()
             .share(replay: 1)
 

@@ -30,6 +30,7 @@ class RepositoriesViewModelSpec: QuickSpec {
 
             var emittedRepositoriesSectionList: [GitHubRepositoriesSection] = []
             var emittedFlowSteps: [AppStep] = []
+            var emittedShowLoadingValues: [Bool] = []
             
             beforeEach {
                 assembler = MainAssembler.create(withAssembly: TestAssembly())
@@ -50,6 +51,12 @@ class RepositoriesViewModelSpec: QuickSpec {
                         if let appStep = step as? AppStep {
                             emittedFlowSteps.append(appStep)
                         }
+                    }).disposed(by: disposeBag)
+
+                emittedShowLoadingValues.removeAll()
+                sut.showLoading
+                    .subscribe(onNext: { (show: Bool) in
+                       emittedShowLoadingValues.append(show)
                     }).disposed(by: disposeBag)
             }
             
@@ -102,6 +109,9 @@ class RepositoriesViewModelSpec: QuickSpec {
                         sut.searchTerm.accept("abc")
                         testScheduler.advanceTo(1000)
                     }
+                    it("requests to show the loading indicator") {
+                        expect(emittedShowLoadingValues).to(equal([true]))
+                    }
                     it("queries GitHub the first 15 matching repositories") {
                         mockGitHubService.verifyFindRepositoriesCalled(
                             withSearchTerm: "abc", page: 1, pageSize: 15)
@@ -119,6 +129,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                         sut.searchTerm.accept("abc")
                         testScheduler.advanceTo(1000)
                     }
+
                     it("requests to show an error alert") {
                         expect(emittedFlowSteps.last).to(equal(.alert(expectedAlertDetails)))
                     }
@@ -133,6 +144,11 @@ class RepositoriesViewModelSpec: QuickSpec {
                             receivedAlertDetails.actions[0]
                                 .handler!(receivedAlertDetails.actions[0].nativeAction)
                         }
+
+                        it("requests to hide the loading indicator") {
+                            expect(emittedShowLoadingValues).to(equal([true, false]))
+                        }
+                        
                         it("continues listening search requests") {
                             sut.searchTerm.accept("abc")
                             testScheduler.advanceTo(2001)
@@ -151,6 +167,9 @@ class RepositoriesViewModelSpec: QuickSpec {
                             stubSearchResult(withTotalItemCount: 5, pageCount: 1))
                         sut.searchTerm.accept("abc")
                         testScheduler.advanceTo(1000)
+                    }
+                    it("requests to hide the loading indicator") {
+                        expect(emittedShowLoadingValues).to(equal([true, false]))
                     }
                     it("emits a section of repositories without next-page-indicator") {
                         guard emittedRepositoriesSectionList.count == 1 else {
@@ -173,6 +192,9 @@ class RepositoriesViewModelSpec: QuickSpec {
                             stubSearchResult(withTotalItemCount: 20, pageCount: 15))
                         sut.searchTerm.accept("abc")
                         testScheduler.advanceTo(1000)
+                    }
+                    it("requests to hide the loading indicator") {
+                        expect(emittedShowLoadingValues).to(equal([true, false]))
                     }
                     it("emits a section of repositories with a next-page-indicator") {
                         guard emittedRepositoriesSectionList.count == 1 else {

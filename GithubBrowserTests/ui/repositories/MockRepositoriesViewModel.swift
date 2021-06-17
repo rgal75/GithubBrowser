@@ -54,6 +54,16 @@ class MockRepositoriesViewModelBase: RepositoriesViewModelProtocol {
         return stubbedRepositories
     }
 
+    var invokedShowLoadingGetter = false
+    var invokedShowLoadingGetterCount = 0
+    var stubbedShowLoading: Observable<Bool>!
+
+    var showLoading: Observable<Bool> {
+        invokedShowLoadingGetter = true
+        invokedShowLoadingGetterCount += 1
+        return stubbedShowLoading
+    }
+
     var invokedStepsGetter = false
     var invokedStepsGetterCount = 0
     var stubbedSteps: PublishRelay<Step>!
@@ -108,6 +118,7 @@ class MockRepositoriesViewModel: MockRepositoriesViewModelBase {
         }).disposed(by: disposeBag)
 
         stubbedRepositories = stubbedRepositoriesSubject.asObservable()
+        stubbedShowLoading = stubbedShowLoadingSubject.asObservable()
         stubbedSteps = PublishRelay<Step>()
         stubbedInitialStep = RxFlowStep.home
     }
@@ -169,5 +180,12 @@ class MockRepositoriesViewModel: MockRepositoriesViewModelBase {
     private var stubbedRepositoriesSubject = ReplaySubject<GitHubRepositoriesSection>.create(bufferSize: 1)
     func expectRepositoriesToEmit(_ repositories: GitHubRepositoriesSection) {
         stubbedRepositoriesSubject.onNext(repositories)
+    }
+
+    // MARK: - showLoading
+
+    private var stubbedShowLoadingSubject = ReplaySubject<Bool>.create(bufferSize: 1)
+    func expectShowLoadingToEmit(_ show: Bool) {
+        stubbedShowLoadingSubject.onNext(show)
     }
 }
