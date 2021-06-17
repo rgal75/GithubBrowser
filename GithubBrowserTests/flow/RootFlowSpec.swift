@@ -100,6 +100,10 @@ extension RootFlowSpec {
             container.register(RootFlowProtocol.self) { _ in
                 return RootFlow()
             }.inObjectScope(.transient)
+
+            container.register(RepositoriesViewModelProtocol.self) { _ in
+                return MockRepositoriesViewModel()
+            }.inObjectScope(.transient)
         }
     }
 }

@@ -58,7 +58,12 @@ class RepositoriesViewModelSpec: QuickSpec {
             func stubSearchResult(withTotalItemCount totalCount: Int, pageCount: Int) -> GitHubSearchResult {
                 var repositories: [GitHubRepository] = []
                 for i in 0...pageCount-1 {
-                    repositories.append(GitHubRepository(fullName: "Repo-\(i)"))
+                    repositories.append(GitHubRepository(
+                                            fullName: "Repo-\(i)",
+                                            description: "any",
+                                            language: "any",
+                                            stargazersCount: 1,
+                                            owner: Owner(login: "any", avatarUrlString: "any")))
                 }
                 return GitHubSearchResult(totalCount: totalCount, repositories: repositories)
             }
@@ -122,8 +127,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                     """) {
                     beforeEach {
                         mockGitHubService.expectFindRepositoriesToEmit(
-                            GitHubSearchResult(
-                                totalCount: 1, repositories: [GitHubRepository(fullName: "Repo-1")]))
+                            stubSearchResult(withTotalItemCount: 5, pageCount: 1))
                         sut.searchTerm.accept("abc")
                     }
                     it("emits a section of repositories without next-page-indicator") {

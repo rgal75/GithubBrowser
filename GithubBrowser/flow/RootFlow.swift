@@ -35,6 +35,6 @@ class RootFlow: RootFlowProtocol {
 
         return .one(flowContributor: .contribute(
             withNextPresentable: initialViewController,
-                        withNextStepper: OneStepper(withSingleStep: AppStep.initialViewRequested)))
+                        withNextStepper: initialViewController.stepper))
     }
 }

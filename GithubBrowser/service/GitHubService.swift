@@ -7,11 +7,9 @@
 
 import Foundation
 import RxSwift
+import Moya
+import InjectPropertyWrapper
 
-struct GitHubSearchResult {
-    var totalCount: Int
-    var repositories: [GitHubRepository]
-}
 protocol GitHubServiceProtocol {
     func findRepositories(
         withSearchTerm searchTerm: String,
@@ -20,10 +18,15 @@ protocol GitHubServiceProtocol {
 }
 
 class GitHubService: GitHubServiceProtocol {
+
+    @Inject var moya: MoyaProvider<GitHubApi>!
+
     func findRepositories(
         withSearchTerm searchTerm: String,
         page: Int,
         pageSize: Int) -> Single<GitHubSearchResult> {
-        return .never()
+        return moya.rx.request(GitHubApi.searchRepositories(
+                                query: searchTerm, perPage: pageSize, page: page))
+            .map(GitHubSearchResult.self)
     }
 }

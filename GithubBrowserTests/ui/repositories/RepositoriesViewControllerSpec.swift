@@ -70,6 +70,15 @@ class RepositoriesViewControllerSpec: QuickSpec {
                 }
             }
 
+            func stubRepository(withFullName fullName: String) -> GitHubRepository {
+                return GitHubRepository(
+                    fullName: fullName,
+                    description: "any",
+                    language: "any",
+                    stargazersCount: 1,
+                    owner: Owner(login: "any", avatarUrlString: "any"))
+            }
+
             it("can be instantiated") {
                 expect(sut).toNot(beNil())
             }
@@ -122,7 +131,7 @@ class RepositoriesViewControllerSpec: QuickSpec {
                                 numPages: 1,
                                 totalPages: 1,
                                 items: [
-                                    .repository(GitHubRepository(fullName: "Repo-1"))
+                                    .repository(stubRepository(withFullName: "Repo-1"))
                                 ]))
                         verifyRepositoriesTableRowCountIs(1)
                         // when
@@ -149,8 +158,18 @@ class RepositoriesViewControllerSpec: QuickSpec {
                                 numPages: 1,
                                 totalPages: 2,
                                 items: [
-                                    .repository(GitHubRepository(fullName: "Repo-1")),
-                                    .repository(GitHubRepository(fullName: "Repo-2")),
+                                    .repository(GitHubRepository(
+                                                    fullName: "Repo-1",
+                                                    description: "Repo-1-desc",
+                                                    language: "Repo-1-lang",
+                                                    stargazersCount: 1,
+                                                    owner: Owner(login: "Repo-1-owner", avatarUrlString: "Repo-1-avatar-url"))),
+                                    .repository(GitHubRepository(
+                                                    fullName: "Repo-2",
+                                                    description: "Repo-2-desc",
+                                                    language: "Repo-2-lang",
+                                                    stargazersCount: 2,
+                                                    owner: Owner(login: "Repo-2-owner", avatarUrlString: "Repo-2-avatar-url"))),
                                     .nextPageIndicator
                                 ]))
                     }

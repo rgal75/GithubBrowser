@@ -92,6 +92,8 @@ class MockRepositoriesViewModel: MockRepositoriesViewModelBase {
         }).disposed(by: disposeBag)
 
         stubbedRepositories = stubbedRepositoriesSubject.asObservable()
+        stubbedSteps = PublishRelay<Step>()
+        stubbedInitialStep = RxFlowStep.home
     }
 
     func resetVerifications() {

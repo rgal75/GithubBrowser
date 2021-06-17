@@ -10,6 +10,7 @@ import CocoaLumberjack
 import RxSwift
 import RxSwiftExt
 import RxCocoa
+import RxFlow
 import InjectPropertyWrapper
 import RxDataSources
 
@@ -22,7 +23,7 @@ extension GitHubRepositoriesSection: SectionModelType {
   }
 }
 
-class RepositoriesViewController: UIViewController {
+class RepositoriesViewController: UIViewController, HasStepper {
     @IBOutlet weak var repositoriesTable: UITableView!
     @IBOutlet weak var emptyStateView: UIView!
     @IBOutlet weak var emptyStateLabel: UILabel!
@@ -33,6 +34,11 @@ class RepositoriesViewController: UIViewController {
     var searchBar: UISearchBar {
         return searchController.searchBar
     }
+
+    var stepper: Stepper {
+        return viewModel
+    }
+
     private let searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = L10n.Repositories.SearchBar.placeholder

@@ -6,6 +6,7 @@
 //
 import Swinject
 import SwinjectStoryboard
+import Moya
 import CocoaLumberjack
 
 class MainAssembler {
@@ -50,12 +51,27 @@ class MainAssembly: Assembly {
 
     func assemble(container: Container) {
 
-        container.register(RootFlow.self) { resolver in
+        container.register(RootFlow.self) { _ in
             return RootFlow()
         }.inObjectScope(.transient)
 
-        container.register(RepositoriesViewModelProtocol.self) { resolver in
+        container.register(RepositoriesViewModelProtocol.self) { _ in
             return RepositoriesViewModel()
         }.inObjectScope(.transient)
+
+        container.register(GitHubServiceProtocol.self) { _ in
+            return GitHubService()
+        }.inObjectScope(.container)
+
+        container.register(RepositoriesViewModelProtocol.self) { _ in
+            return RepositoriesViewModel()
+        }.inObjectScope(.transient)
+
+        container.register(MoyaProvider<GitHubApi>.self) { _ in
+            return MoyaProvider<GitHubApi>(plugins: [
+                NetworkLoggerPlugin(
+                    configuration: NetworkLoggerPlugin.Configuration(logOptions: .verbose))
+            ])
+        }.inObjectScope(.container)
     }
 }
