@@ -11,6 +11,8 @@ import Quick
 import RxSwift
 import Swinject
 import RxFlow
+import InjectPropertyWrapper
+import ViewControllerPresentationSpy
 
 // swiftlint:disable file_length
 class RootFlowSpec: QuickSpec {
@@ -24,6 +26,7 @@ class RootFlowSpec: QuickSpec {
 
             beforeEach {
                 assembler = MainAssembler.create(withAssembly: TestAssembly())
+                InjectSettings.resolver = assembler.container
                 sut = assembler.resolver.resolve(RootFlowProtocol.self) as? RootFlow
                 disposeBag = DisposeBag()
             }
@@ -61,6 +64,28 @@ class RootFlowSpec: QuickSpec {
                     it("shows the \(RepositoriesViewController.self)") {
                         // then
                         expect(sut.rootVC.topViewController).to(beAnInstanceOf(RepositoriesViewController.self))
+                    }
+                }
+
+                context("when opening an alert is requested") {
+                    it("shows the alert") {
+                        let alertVerifier = AlertVerifier()
+                        let expectedAlert = AlertDetails(
+                            title: "alert_title",
+                            message: "alert_message",
+                            actions: [AlertAction(title: "OK", style: .cancel)])
+                        // then
+                        testStepper.triggerStep(AppStep.alert(expectedAlert))
+                        // then
+                        alertVerifier.verify(
+                            title: expectedAlert.title,
+                            message: expectedAlert.message,
+                            animated: true,
+                            actions: [
+                                .cancel("OK")
+                            ],
+                            presentingViewController: sut.rootVC
+                        )
                     }
                 }
             }

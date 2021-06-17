@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import RxRelay
+import RxFlow
 import Nimble
 
 class MockRepositoriesViewModelBase: RepositoriesViewModelProtocol {
@@ -35,12 +36,40 @@ class MockRepositoriesViewModelBase: RepositoriesViewModelProtocol {
 
     var invokedRepositoriesGetter = false
     var invokedRepositoriesGetterCount = 0
-    var stubbedRepositories: Observable<GithubRepositoriesSection>!
+    var stubbedRepositories: Observable<GitHubRepositoriesSection>!
 
-    var repositories: Observable<GithubRepositoriesSection> {
+    var repositories: Observable<GitHubRepositoriesSection> {
         invokedRepositoriesGetter = true
         invokedRepositoriesGetterCount += 1
         return stubbedRepositories
+    }
+
+    var invokedStepsGetter = false
+    var invokedStepsGetterCount = 0
+    var stubbedSteps: PublishRelay<Step>!
+
+    var steps: PublishRelay<Step> {
+        invokedStepsGetter = true
+        invokedStepsGetterCount += 1
+        return stubbedSteps
+    }
+
+    var invokedInitialStepGetter = false
+    var invokedInitialStepGetterCount = 0
+    var stubbedInitialStep: Step!
+
+    var initialStep: Step {
+        invokedInitialStepGetter = true
+        invokedInitialStepGetterCount += 1
+        return stubbedInitialStep
+    }
+
+    var invokedReadyToEmitSteps = false
+    var invokedReadyToEmitStepsCount = 0
+
+    func readyToEmitSteps () {
+        invokedReadyToEmitSteps = true
+        invokedReadyToEmitStepsCount += 1
     }
 }
 
@@ -101,8 +130,8 @@ class MockRepositoriesViewModel: MockRepositoriesViewModelBase {
 
     // MARK: - repositories
 
-    private var stubbedRepositoriesSubject = ReplaySubject<GithubRepositoriesSection>.create(bufferSize: 1)
-    func expectRepositoriesToEmit(_ repositories: GithubRepositoriesSection) {
+    private var stubbedRepositoriesSubject = ReplaySubject<GitHubRepositoriesSection>.create(bufferSize: 1)
+    func expectRepositoriesToEmit(_ repositories: GitHubRepositoriesSection) {
         stubbedRepositoriesSubject.onNext(repositories)
     }
 }

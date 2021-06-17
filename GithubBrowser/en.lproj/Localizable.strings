@@ -1,11 +1,14 @@
-/* 
-  Localizable.strings
-  GithubBrowser
+"alert.action.ok" = "OK";
 
-  Created by Richard Gal on 2021. 05. 07..
-  
-*/
+"alert.title.error" = "Error";
+
 "app.title" = "GithubBrowser";
+
+"error.disconnected.message" = "You are not connected to the Internet. Please, try again later.";
+
+"error.serviceUnavailable.message" = "The GitHub API is currently down. Please, try again later.";
+
+"error.unexpected.message" = "An unexpected error has occurred.";
 
 "repositories.emptyMessage" = "No repositories match your search criteria.";
 

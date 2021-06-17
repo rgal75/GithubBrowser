@@ -117,13 +117,21 @@ class RepositoriesViewControllerSpec: QuickSpec {
                 context("when the view model emits an empty list of repositories") {
                     beforeEach {
                         mockViewModel.expectRepositoriesToEmit(
-                            GithubRepositoriesSection(items: [
-                                .repository(GithubRepository(fullName: "Repo-1"))
-                            ]))
+                            GitHubRepositoriesSection(
+                                searchTerm: "any",
+                                numPages: 1,
+                                totalPages: 1,
+                                items: [
+                                    .repository(GitHubRepository(fullName: "Repo-1"))
+                                ]))
                         verifyRepositoriesTableRowCountIs(1)
                         // when
                         mockViewModel.expectRepositoriesToEmit(
-                            GithubRepositoriesSection(items: []))
+                            GitHubRepositoriesSection(
+                                searchTerm: "any",
+                                numPages: 1,
+                                totalPages: 1,
+                                items: []))
                     }
                     it("clears the repositories table") {
                         verifyRepositoriesTableRowCountIs(0)
@@ -136,11 +144,15 @@ class RepositoriesViewControllerSpec: QuickSpec {
                 context("when the view model emits a list of repositories with a next-page indicator") {
                     beforeEach {
                         mockViewModel.expectRepositoriesToEmit(
-                            GithubRepositoriesSection(items: [
-                                .repository(GithubRepository(fullName: "Repo-1")),
-                                .repository(GithubRepository(fullName: "Repo-2")),
-                                .nextPageIndicator
-                            ]))
+                            GitHubRepositoriesSection(
+                                searchTerm: "any",
+                                numPages: 1,
+                                totalPages: 2,
+                                items: [
+                                    .repository(GitHubRepository(fullName: "Repo-1")),
+                                    .repository(GitHubRepository(fullName: "Repo-2")),
+                                    .nextPageIndicator
+                                ]))
                     }
                     it("""
                         shows the repositories in the repositories table

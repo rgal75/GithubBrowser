@@ -13,10 +13,10 @@ import RxCocoa
 import InjectPropertyWrapper
 import RxDataSources
 
-extension GithubRepositoriesSection: SectionModelType {
-  typealias Item = GithubRepositoryItemType
+extension GitHubRepositoriesSection: SectionModelType {
+  typealias Item = GitHubRepositoryItemType
 
-   init(original: GithubRepositoriesSection, items: [Item]) {
+   init(original: GitHubRepositoriesSection, items: [Item]) {
     self = original
     self.items = items
   }
@@ -83,7 +83,7 @@ class RepositoriesViewController: UIViewController {
     }
 
     private func driveUI() {
-        let repositoriesDataSource = RxTableViewSectionedReloadDataSource<GithubRepositoriesSection>(
+        let repositoriesDataSource = RxTableViewSectionedReloadDataSource<GitHubRepositoriesSection>(
             configureCell: { (_, tableView, indexPath, item) -> UITableViewCell in
                 var cell: UITableViewCell?
                 switch item {

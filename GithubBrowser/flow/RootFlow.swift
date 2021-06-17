@@ -8,7 +8,7 @@ import Foundation
 import CocoaLumberjack
 import RxFlow
 
-protocol RootFlowProtocol: Flow {
+protocol RootFlowProtocol: Flow, AlertPresenterProtocol {
 }
 class RootFlow: RootFlowProtocol {
     var root: Presentable {
@@ -23,7 +23,8 @@ class RootFlow: RootFlowProtocol {
         switch step {
         case .initialViewRequested:
             return showInitialView()
-        default:
+        case .alert(let alertDetails):
+            present(alertDetails: alertDetails, withStyle: .alert, on: rootViewController)
             return .none
         }
     }
