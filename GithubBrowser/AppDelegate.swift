@@ -10,19 +10,19 @@ import CocoaLumberjack
 import RxFlow
 import RxSwift
 import SwinjectStoryboard
+import InjectPropertyWrapper
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     private let assembler = MainAssembler.create(withAssembly: MainAssembly())
     private var coordinator = FlowCoordinator()
     private let disposeBag = DisposeBag()
-    // TODO private let theme = EteleTheme()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        InjectSettings.resolver = assembler.container
         setupLogging()
         showRootViewController()
-        // TODO theme.apply(for: application)
         DDLogDebug("Application started")
         return true
     }
@@ -62,7 +62,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             preconditionFailure("Failed to resolve \(RootFlow.self).")
         }
 
-        Flows.whenReady(flow1: initialFlow) { [weak self] root in
+        Flows.use(initialFlow, when: .ready) { [weak self] root in
             guard let self = self else { return }
             self.window = UIWindow()
             self.window?.rootViewController = root

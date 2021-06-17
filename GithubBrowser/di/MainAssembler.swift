@@ -6,7 +6,9 @@
 //
 import Swinject
 import SwinjectStoryboard
+import Moya
 import CocoaLumberjack
+import RxSwift
 
 class MainAssembler {
     public static var instance: MainAssembler! = nil
@@ -14,10 +16,13 @@ class MainAssembler {
     var resolver: Resolver {
         return assembler.resolver
     }
-    private let assembler = Assembler(container: SwinjectStoryboard.defaultContainer)
+    let container: Container
+    private let assembler: Assembler
 
     // swiftlint:disable force_cast
     private init(withAssembly assembly: Assembly) {
+        container = SwinjectStoryboard.defaultContainer
+        assembler = Assembler(container: container)
         assembler.apply(assembly: assembly)
         DDLogDebug("DI: Assembler instance: \(ObjectIdentifier(assembler).debugDescription)")
     }
@@ -47,8 +52,31 @@ class MainAssembly: Assembly {
 
     func assemble(container: Container) {
 
-        container.register(RootFlow.self) { resolver in
+        container.register(RootFlow.self) { _ in
             return RootFlow()
+        }.inObjectScope(.transient)
+
+        container.register(RepositoriesViewModelProtocol.self) { _ in
+            return RepositoriesViewModel()
+        }.inObjectScope(.transient)
+
+        container.register(GitHubServiceProtocol.self) { _ in
+            return GitHubService()
+        }.inObjectScope(.container)
+
+        container.register(RepositoriesViewModelProtocol.self) { _ in
+            return RepositoriesViewModel()
+        }.inObjectScope(.transient)
+
+        container.register(MoyaProvider<GitHubApi>.self) { _ in
+            return MoyaProvider<GitHubApi>(plugins: [
+                NetworkLoggerPlugin(
+                    configuration: NetworkLoggerPlugin.Configuration(logOptions: .verbose))
+            ])
+        }.inObjectScope(.container)
+
+        container.register(SchedulerType.self) { _ in
+            return MainScheduler.instance
         }.inObjectScope(.transient)
     }
 }
