@@ -5,6 +5,8 @@ PODS:
   - CocoaLumberjack/Swift (3.7.2):
     - CocoaLumberjack/Core
   - Differentiator (5.0.0)
+  - InjectPropertyWrapper (0.3.0)
+  - Kingfisher (6.3.0)
   - Moya/Core (15.0.0-alpha.1):
     - Alamofire (~> 5.0)
   - Moya/RxSwift (15.0.0-alpha.1):
@@ -50,6 +52,8 @@ PODS:
 DEPENDENCIES:
   - BartyCrouch (= 4.5.0)
   - CocoaLumberjack/Swift (= 3.7.2)
+  - InjectPropertyWrapper
+  - Kingfisher
   - Moya/RxSwift (from `https://github.com/peagasilva/Moya.git`, branch `rxswift-6`)
   - Nimble (~> 9.0)
   - Quick (~> 3.1)
@@ -73,6 +77,8 @@ SPEC REPOS:
     - BartyCrouch
     - CocoaLumberjack
     - Differentiator
+    - InjectPropertyWrapper
+    - Kingfisher
     - Nimble
     - Quick
     - RxBlocking
@@ -109,6 +115,8 @@ SPEC CHECKSUMS:
   BartyCrouch: 1c4b60efab0850091e5224cf69afe856f4fe96cd
   CocoaLumberjack: b7e05132ff94f6ae4dfa9d5bce9141893a21d9da
   Differentiator: e8497ceab83c1b10ca233716d547b9af21b9344d
+  InjectPropertyWrapper: b8758f7f8f46f0012804a7bf1037ef8f713f098c
+  Kingfisher: 6c3df386db71d82c0817a429d2c9421a77396529
   Moya: 1a04c3836ce1cd20430c176d1318436cbd1371a1
   Nimble: 4f4a345c80b503b3ea13606a4f98405974ee4d0b
   Quick: 60f0ea3b8e0cfc0df3259a5c06a238ad8b3c46e0
@@ -127,6 +135,6 @@ SPEC CHECKSUMS:
   SwinjectStoryboard: 32512ef16c2b0ff5b8f823b23539c4a50f6d3383
   ViewControllerPresentationSpy: 806584e0413860ee451ec5e513ed4661c39a3727
 
-PODFILE CHECKSUM: 871d7526024a9f4f7d91259991b901f86ad834af
+PODFILE CHECKSUM: ac6236cb63c6ef2a559c5426a5bc43f0e5f2b6ce
 
 COCOAPODS: 1.10.1

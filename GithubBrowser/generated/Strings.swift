@@ -11,9 +11,46 @@ import Foundation
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
 
+  internal enum Alert {
+    internal enum Action {
+      /// 
+      internal static let ok = L10n.tr("Localizable", "alert.action.ok")
+    }
+    internal enum Title {
+      /// 
+      internal static let error = L10n.tr("Localizable", "alert.title.error")
+    }
+  }
+
   internal enum App {
     /// GithubBrowser
     internal static let title = L10n.tr("Localizable", "app.title")
+  }
+
+  internal enum Error {
+    internal enum Disconnected {
+      /// 
+      internal static let message = L10n.tr("Localizable", "error.disconnected.message")
+    }
+    internal enum ServiceUnavailable {
+      /// 
+      internal static let message = L10n.tr("Localizable", "error.serviceUnavailable.message")
+    }
+    internal enum Unexpected {
+      /// 
+      internal static let message = L10n.tr("Localizable", "error.unexpected.message")
+    }
+  }
+
+  internal enum Repositories {
+    /// 
+    internal static let emptyMessage = L10n.tr("Localizable", "repositories.emptyMessage")
+    /// 
+    internal static let title = L10n.tr("Localizable", "repositories.title")
+    internal enum SearchBar {
+      /// 
+      internal static let placeholder = L10n.tr("Localizable", "repositories.searchBar.placeholder")
+    }
   }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length

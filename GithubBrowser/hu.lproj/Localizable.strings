@@ -6,3 +6,19 @@
   
 */
 "app.title" = "GithubBrowser";
+
+"alert.action.ok" = "";
+
+"alert.title.error" = "";
+
+"error.disconnected.message" = "";
+
+"error.serviceUnavailable.message" = "";
+
+"error.unexpected.message" = "";
+
+"repositories.emptyMessage" = "";
+
+"repositories.searchBar.placeholder" = "";
+
+"repositories.title" = "";

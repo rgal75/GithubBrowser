@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '11.0'
+platform :ios, '13.0'
 
 target 'GithubBrowser' do
   use_frameworks!
@@ -11,12 +11,14 @@ target 'GithubBrowser' do
   pod 'CocoaLumberjack/Swift', '3.7.2'
   pod 'Swinject', '2.6.0'
   pod 'SwinjectStoryboard', '2.2.0'
+  pod 'InjectPropertyWrapper'
   pod 'RxSwift', '~> 6.0'
   pod 'RxCocoa', '~> 6.0'
   pod 'RxSwiftExt', '~> 6.0'
   pod 'RxDataSources', '~> 5.0'
   pod 'Moya/RxSwift', :git => 'https://github.com/peagasilva/Moya.git', :branch => 'rxswift-6' #'14.0.0'
   pod 'RxFlow', '~> 2.12'
+  pod 'Kingfisher'
   pod 'SVProgressHUD', :git => 'https://github.com/SVProgressHUD/SVProgressHUD.git'
 
   target 'GithubBrowserTests' do
