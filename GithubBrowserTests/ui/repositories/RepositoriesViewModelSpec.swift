@@ -85,9 +85,8 @@ class RepositoriesViewModelSpec: QuickSpec {
                         sut.searchTerm.accept("")
                         testScheduler.advanceTo(1000)
                     }
-                    it("emits an empty section") {
-                        expect(emittedRepositoriesSectionList).to(haveCount(1))
-                        expect(emittedRepositoriesSectionList.last?.items).to(beEmpty())
+                    it("emits nothing") {
+                        expect(emittedRepositoriesSectionList).to(haveCount(0))
                     }
                 }
 

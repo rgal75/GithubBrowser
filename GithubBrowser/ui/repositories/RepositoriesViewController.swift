@@ -45,6 +45,7 @@ class RepositoriesViewController: UIViewController, HasStepper {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = L10n.Repositories.SearchBar.placeholder
         searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
         return searchController
     }()
 
@@ -54,7 +55,6 @@ class RepositoriesViewController: UIViewController, HasStepper {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupUI()
         driveUI()
         bindToViewModel()
@@ -69,7 +69,7 @@ class RepositoriesViewController: UIViewController, HasStepper {
         navigationController?.navigationBar.prefersLargeTitles = false
 
         repositoriesTable.backgroundView = emptyStateView
-        emptyStateLabel.text = ""
+        emptyStateLabel.text = L10n.Repositories.initialMessage
         loadingIndicator.isHidden = true
         repositoriesTable.rowHeight = UITableView.automaticDimension
         repositoriesTable.estimatedRowHeight = 120
@@ -79,6 +79,7 @@ class RepositoriesViewController: UIViewController, HasStepper {
 
     private func bindToViewModel() {
         searchBar.rx.text.orEmpty
+            .distinctUntilChanged()
             .bind(to: viewModel.searchTerm).disposed(by: disposeBag)
 
         repositoriesTable.rx.willDisplayCell
@@ -92,9 +93,23 @@ class RepositoriesViewController: UIViewController, HasStepper {
             .mapTo(())
             .bind(to: viewModel.loadNextPage).disposed(by: disposeBag)
 
+        repositoriesTable.rx.modelSelected(GitHubRepositoryItemType.self)
+            .filterMap({ (repositoryItem: GitHubRepositoryItemType) -> FilterMap<GitHubRepository> in
+                guard case let GitHubRepositoryItemType.repository(repository) = repositoryItem else {
+                    return .ignore
+                }
+                return .map(repository)
+            })
+            .bind(to: viewModel.repositorySelected)
+            .disposed(by: disposeBag)
     }
 
     private func driveUI() {
+        driveRepositoriesTable()
+        driveEmptyState()
+    }
+
+    private func driveRepositoriesTable() {
         let repositoriesDataSource = RxTableViewSectionedReloadDataSource<GitHubRepositoriesSection>(
             configureCell: { (_, tableView, indexPath, item) -> UITableViewCell in
                 var cell: UITableViewCell?
@@ -128,21 +143,25 @@ class RepositoriesViewController: UIViewController, HasStepper {
                 return cell ?? UITableViewCell()
             })
 
-        repositoriesTable.rx.modelSelected(GitHubRepositoryItemType.self)
-            .filterMap({ (repositoryItem: GitHubRepositoryItemType) -> FilterMap<GitHubRepository> in
-                guard case let GitHubRepositoryItemType.repository(repository) = repositoryItem else {
-                    return .ignore
-                }
-                return .map(repository)
-            })
-            .bind(to: viewModel.repositorySelected)
-            .disposed(by: disposeBag)
-
         viewModel.repositories
             .map({[$0]})
             .bind(to: repositoriesTable.rx.items(dataSource: repositoriesDataSource))
             .disposed(by: disposeBag)
 
+        repositoriesTable.rx.dataReloaded$
+            .do(onNext: { [weak self] _ in
+                guard let self = self,
+                      let section = repositoriesDataSource.sectionModels.first else { return }
+                if section.numPages == 1 && !section.items.isEmpty {
+                    self.repositoriesTable.scrollToRow(
+                        at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
+                }
+
+            })
+            .subscribe().disposed(by: disposeBag)
+    }
+
+    private func driveEmptyState() {
         viewModel.repositories
             .map({$0.items.isEmpty})
             .asDriver(onErrorJustReturn: true)
@@ -168,5 +187,13 @@ class RepositoriesViewController: UIViewController, HasStepper {
     private func setEmptyState(_ empty: Bool, withMessage message: String) {
         emptyStateView.isHidden = !empty
         emptyStateLabel.text = empty ? message : ""
+    }
+}
+
+extension Reactive where Base: UITableView {
+
+    var dataReloaded$: Observable<Void> {
+        return methodInvoked(#selector(UITableView.reloadData))
+            .mapTo(())
     }
 }

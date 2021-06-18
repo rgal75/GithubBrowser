@@ -12,6 +12,8 @@
 
 "repositories.emptyMessage" = "No repositories match your search criteria.";
 
+"repositories.initialMessage" = "Enter your search criteria to find GitHub repositories.";
+
 "repositories.searchBar.placeholder" = "Enter search term";
 
 "repositories.title" = "Repositories";

@@ -71,7 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         coordinator.coordinate(
             flow: initialFlow,
-            with: OneStepper(withSingleStep: AppStep.initialViewRequested))
+            with: OneStepper(withSingleStep: AppStep.repositoriesViewRequested))
     }
 
     private func setupLogging() {

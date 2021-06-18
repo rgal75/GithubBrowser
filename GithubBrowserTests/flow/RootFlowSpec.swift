@@ -22,18 +22,15 @@ class RootFlowSpec: QuickSpec {
     override func spec() {
         describe("RootFlow") {
             var sut: RootFlow!
-            var disposeBag: DisposeBag!
             var assembler: MainAssembler!
 
             beforeEach {
                 assembler = MainAssembler.create(withAssembly: TestAssembly())
                 InjectSettings.resolver = assembler.container
                 sut = assembler.resolver.resolve(RootFlowProtocol.self) as? RootFlow
-                disposeBag = DisposeBag()
             }
 
             afterEach {
-                disposeBag = nil
                 assembler.dispose()
             }
 
@@ -59,7 +56,7 @@ class RootFlowSpec: QuickSpec {
 
                 context("when presenting the initial view is requested") {
                     beforeEach {
-                        testStepper.triggerStep(AppStep.initialViewRequested)
+                        testStepper.triggerStep(AppStep.repositoriesViewRequested)
                     }
 
                     it("shows the \(RepositoriesViewController.self)") {
