@@ -5,12 +5,9 @@
 //  
 //
 import RxFlow
-import RxSwift
-import RxRelay
 
 enum AppStep: Step, Equatable {
-    case initialViewRequested
+    case repositoriesViewRequested
     case safariViewRequested(url: URL)
-
     case alert(AlertDetails)
 }

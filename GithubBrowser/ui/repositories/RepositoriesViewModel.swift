@@ -61,6 +61,7 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
 
         let firstPageRequest$: Observable<GitHubRepositoriesSection> = searchTerm
             .debounce(.milliseconds(600), scheduler: typingScheduler)
+            .filter({ !$0.isEmpty })
             .map({ (searchTerm: String) -> GitHubRepositoriesSection in
                 return GitHubRepositoriesSection(
                     searchTerm: searchTerm, numPages: 0, totalPages: 0, items: [])
@@ -78,24 +79,23 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
                 let searchTerm = lastSection.searchTerm
                 let nextPage = lastSection.numPages + 1
                 var totalPageCount = 0
-                var repositories$: Observable<[GitHubRepositoryItemType]> = .never()
-                if searchTerm.isEmpty {
-                    repositories$ = Observable.just([])
-                } else {
-                    repositories$ = gitHubService.findRepositories(
-                        withSearchTerm: searchTerm, page: nextPage, pageSize: REPOSITORIES_PAGE_SIZE)
-                        .map({ (searchResult: GitHubSearchResult) -> [GitHubRepositoryItemType] in
-                            totalPageCount = searchResult.totalCount
-                            return searchResult.repositories.map { repo -> GitHubRepositoryItemType in
-                                return .repository(repo)
-                            }
-                        })
-                        .catchError(showAlert: { [weak self] (alertDetails: AlertDetails) in
-                            self?.steps.accept(AppStep.alert(alertDetails))
-                        })
-                        .asObservable()
+                guard !searchTerm.isEmpty else {
+                    return Observable.just(GitHubRepositoriesSection(
+                                            searchTerm: "", numPages: nextPage, totalPages: 0, items: []))
                 }
-                return repositories$
+
+                return gitHubService.findRepositories(
+                    withSearchTerm: searchTerm, page: nextPage, pageSize: REPOSITORIES_PAGE_SIZE)
+                    .map({ (searchResult: GitHubSearchResult) -> [GitHubRepositoryItemType] in
+                        totalPageCount = searchResult.totalCount
+                        return searchResult.repositories.map { repo -> GitHubRepositoryItemType in
+                            return .repository(repo)
+                        }
+                    })
+                    .catchError(showAlert: { [weak self] (alertDetails: AlertDetails) in
+                        self?.steps.accept(AppStep.alert(alertDetails))
+                    })
+                    .asObservable()
                     .map({ (newPageItems: [GitHubRepositoryItemType]) -> GitHubRepositoriesSection in
                         var repositoryItems = lastSection.items + newPageItems
                         repositoryItems.removeAll(where: { (item: GitHubRepositoryItemType) in
@@ -111,8 +111,7 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
                             items: repositoryItems)
                     })
             })
-            .do(
-                onNext: { _ in showLoadingSubject.onNext(false)},
+            .do(onNext: { _ in showLoadingSubject.onNext(false)},
                 onError: { _ in showLoadingSubject.onNext(false)})
             .retry()
             .share(replay: 1)

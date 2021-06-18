@@ -12,35 +12,20 @@ import Alamofire
 
 struct AlertAction {
 
-    enum Style {
-        case retry, `default`, cancel, destructive
-
-        func asUIAlertActionStyle() -> UIAlertAction.Style {
-            switch self {
-            case .retry, .default:
-                return .default
-            case .cancel:
-                return .cancel
-            case .destructive:
-                return .destructive
-            }
-        }
-    }
-
     var title: String? {
         return wrappedAction.title
     }
-    var style: AlertAction.Style
+    var style: UIAlertAction.Style
     var handler: ((UIAlertAction) -> Void)?
     var nativeAction: UIAlertAction {
         return wrappedAction
     }
     private var wrappedAction: UIAlertAction
 
-    init(title: String?, style: AlertAction.Style, handler: ((UIAlertAction) -> Swift.Void)? = nil) {
+    init(title: String?, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Swift.Void)? = nil) {
         self.handler = handler
         self.style = style
-        self.wrappedAction = UIAlertAction(title: title, style: style.asUIAlertActionStyle(), handler: handler)
+        self.wrappedAction = UIAlertAction(title: title, style: style, handler: handler)
     }
 
     static let okAction = AlertAction(title: L10n.Alert.Action.ok, style: .default)

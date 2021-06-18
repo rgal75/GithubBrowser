@@ -1,5 +1,5 @@
 strings:
-  inputs: GithubBrowser/hu.lproj/Localizable.strings
+  inputs: GithubBrowser/en.lproj/Localizable.strings
   outputs:
     templateName: structured-swift5
     output: GithubBrowser/generated/Strings.swift

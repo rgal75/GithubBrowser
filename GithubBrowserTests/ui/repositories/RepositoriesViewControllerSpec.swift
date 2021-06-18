@@ -23,7 +23,6 @@ class RepositoriesViewControllerSpec: QuickSpec {
         describe("RepositoriesViewController") {
             var sut: RepositoriesViewController!
             var mockViewModel: MockRepositoriesViewModel!
-            var disposeBag: DisposeBag!
             var assembler: MainAssembler!
             
             beforeEach {
@@ -31,11 +30,9 @@ class RepositoriesViewControllerSpec: QuickSpec {
                 InjectSettings.resolver = assembler.container
                 sut = StoryboardScene.RepositoriesViewController.repositoriesViewController.instantiate()
                 mockViewModel = sut.viewModel as? MockRepositoriesViewModel
-                disposeBag = DisposeBag()
             }
             
             afterEach {
-                disposeBag = nil
                 assembler.dispose()
             }
 
@@ -117,10 +114,11 @@ class RepositoriesViewControllerSpec: QuickSpec {
                 }
                 it("""
                     has a view to represent the empty state of the repositories table
-                    with an empty message and a hidden loading indicator
+                    with an initial message
+                    and a hidden loading indicator
                     """) {
                     expect(sut.repositoriesTable.backgroundView).to(be(sut.emptyStateView))
-                    expect(sut.emptyStateLabel.text).to(beEmpty())
+                    expect(sut.emptyStateLabel.text).to(equal("Enter your search criteria to find GitHub repositories."))
                     expect(sut.loadingIndicator.isHidden).to(beTrue())
                 }
                 it("sends an empty search term to the view model") {
@@ -144,7 +142,7 @@ class RepositoriesViewControllerSpec: QuickSpec {
                     beforeEach {
                         mockViewModel.expectRepositoriesToEmit(
                             GitHubRepositoriesSection(
-                                searchTerm: "any",
+                                searchTerm: "a",
                                 numPages: 1,
                                 totalPages: 1,
                                 items: [
@@ -154,7 +152,7 @@ class RepositoriesViewControllerSpec: QuickSpec {
                         // when
                         mockViewModel.expectRepositoriesToEmit(
                             GitHubRepositoriesSection(
-                                searchTerm: "any",
+                                searchTerm: "ab",
                                 numPages: 1,
                                 totalPages: 1,
                                 items: []))

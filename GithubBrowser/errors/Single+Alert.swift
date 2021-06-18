@@ -29,12 +29,8 @@ extension PrimitiveSequence where Trait == SingleTrait {
                 return dismissedSubject
                     .take(1)
                     .asSingle()
-                    .map({ (action: AlertAction) -> Element in
-                        if action.style == .retry {
-                            throw GitHubBrowserError.retryRequest
-                        } else {
-                            throw error
-                        }
+                    .map({ _ in
+                        throw error
                     })
             }
             return Single.error(error)
