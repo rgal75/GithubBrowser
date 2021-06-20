@@ -11,7 +11,6 @@
 		2314E6E1264418E6002DD09C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2314E6DF264418E6002DD09C /* Main.storyboard */; };
 		2314E6E3264418E7002DD09C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2314E6E2264418E7002DD09C /* Assets.xcassets */; };
 		2314E6E6264418E7002DD09C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2314E6E4264418E7002DD09C /* LaunchScreen.storyboard */; };
-		2314E6F1264418E8002DD09C /* GithubBrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2314E6F0264418E8002DD09C /* GithubBrowserTests.swift */; };
 		2314E6FC264418E8002DD09C /* GithubBrowserUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2314E6FB264418E8002DD09C /* GithubBrowserUITests.swift */; };
 		2314E749264423B2002DD09C /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2314E748264423B2002DD09C /* main.swift */; };
 		2314E751264423F5002DD09C /* TestingAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2314E750264423F5002DD09C /* TestingAppDelegate.swift */; };
@@ -79,7 +78,6 @@
 		2314E6E5264418E7002DD09C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2314E6E7264418E7002DD09C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2314E6EC264418E8002DD09C /* GithubBrowserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GithubBrowserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		2314E6F0264418E8002DD09C /* GithubBrowserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubBrowserTests.swift; sourceTree = "<group>"; };
 		2314E6F2264418E8002DD09C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2314E6F7264418E8002DD09C /* GithubBrowserUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GithubBrowserUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2314E6FB264418E8002DD09C /* GithubBrowserUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubBrowserUITests.swift; sourceTree = "<group>"; };
@@ -213,7 +211,6 @@
 				233AF0D2267A124A0056E7F7 /* service */,
 				23DC80D0267B643A00221259 /* errors */,
 				23380DED2677344500B4F0BE /* test-helper */,
-				2314E6F0264418E8002DD09C /* GithubBrowserTests.swift */,
 				2314E6F2264418E8002DD09C /* Info.plist */,
 				2314E750264423F5002DD09C /* TestingAppDelegate.swift */,
 			);
@@ -757,7 +754,6 @@
 				23380DF1267755D800B4F0BE /* MockRepositoriesViewModel.swift in Sources */,
 				23DC80C8267B1C0000221259 /* GitHubServiceSpec.swift in Sources */,
 				23380DEF2677346200B4F0BE /* TestHelper+UI.swift in Sources */,
-				2314E6F1264418E8002DD09C /* GithubBrowserTests.swift in Sources */,
 				23DC80D2267B646B00221259 /* ErrorConvertSpec.swift in Sources */,
 				233AF0D7267A13130056E7F7 /* MockGitHubService.swift in Sources */,
 				2314E751264423F5002DD09C /* TestingAppDelegate.swift in Sources */,

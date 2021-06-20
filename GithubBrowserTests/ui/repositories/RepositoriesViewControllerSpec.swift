@@ -143,8 +143,8 @@ class RepositoriesViewControllerSpec: QuickSpec {
                         mockViewModel.expectRepositoriesToEmit(
                             GitHubRepositoriesSection(
                                 searchTerm: "a",
-                                numPages: 1,
-                                totalPages: 1,
+                                nextPageUrl: nil,
+                                isNewSearch: true,
                                 items: [
                                     .repository(stubRepository(withFullName: "Repo-1"))
                                 ]))
@@ -153,8 +153,8 @@ class RepositoriesViewControllerSpec: QuickSpec {
                         mockViewModel.expectRepositoriesToEmit(
                             GitHubRepositoriesSection(
                                 searchTerm: "ab",
-                                numPages: 1,
-                                totalPages: 1,
+                                nextPageUrl: nil,
+                                isNewSearch: true,
                                 items: []))
                     }
                     it("clears the repositories table") {
@@ -178,8 +178,8 @@ class RepositoriesViewControllerSpec: QuickSpec {
                         mockViewModel.expectRepositoriesToEmit(
                             GitHubRepositoriesSection(
                                 searchTerm: "any",
-                                numPages: 1,
-                                totalPages: 2,
+                                nextPageUrl: nil,
+                                isNewSearch: true,
                                 items: [
                                     .repository(repository1),
                                     .repository(GitHubRepository(

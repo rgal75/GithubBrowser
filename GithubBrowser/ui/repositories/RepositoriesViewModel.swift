@@ -16,10 +16,26 @@ enum GitHubRepositoryItemType: Equatable {
     case nextPageIndicator
 }
 
-struct GitHubRepositoriesSection {
+protocol GitHubRepositoriesSearchRequest {
+    var searchTerm: String { get }
+    var nextPageUrl: URL? { get }
+    var items: [GitHubRepositoryItemType] { get }
+}
+
+struct InitialSearchRequest: GitHubRepositoriesSearchRequest {
     var searchTerm: String
-    var numPages: Int
-    var totalPages: Int
+    var nextPageUrl: URL? {
+        return nil
+    }
+    var items: [GitHubRepositoryItemType] {
+        return []
+    }
+}
+
+struct GitHubRepositoriesSection: GitHubRepositoriesSearchRequest {
+    var searchTerm: String
+    var nextPageUrl: URL?
+    var isNewSearch: Bool
     var items: [GitHubRepositoryItemType]
 }
 
@@ -59,35 +75,40 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
         let showLoadingSubject = PublishSubject<Bool>()
         showLoading = showLoadingSubject.asObservable()
 
-        let firstPageRequest$: Observable<GitHubRepositoriesSection> = searchTerm
+        let firstPageRequest$: Observable<GitHubRepositoriesSearchRequest> = searchTerm
             .debounce(.milliseconds(600), scheduler: typingScheduler)
             .filter({ !$0.isEmpty })
-            .map({ (searchTerm: String) -> GitHubRepositoriesSection in
-                return GitHubRepositoriesSection(
-                    searchTerm: searchTerm, numPages: 0, totalPages: 0, items: [])
+            .map({ (searchTerm: String) -> GitHubRepositoriesSearchRequest in
+                return InitialSearchRequest(searchTerm: searchTerm)
             })
             .do(onNext: { _ in showLoadingSubject.onNext(true) })
 
-        let nextPageRequest$: Observable<GitHubRepositoriesSection> = Observable.deferred { [weak self] in
+        let nextPageRequest$: Observable<GitHubRepositoriesSearchRequest> = Observable.deferred { [weak self] in
             guard let self = self else { return .never() }
             return self.loadNextPage
-                .withLatestFrom(self.repositories)
+                .withLatestFrom(self.repositories, resultSelector: { _, lastRepositorySection in
+                    return lastRepositorySection as GitHubRepositoriesSearchRequest
+                })
         }
 
         repositories = Observable.merge(firstPageRequest$, nextPageRequest$)
-            .flatMap({ (lastSection: GitHubRepositoriesSection) -> Observable<GitHubRepositoriesSection> in
-                let searchTerm = lastSection.searchTerm
-                let nextPage = lastSection.numPages + 1
-                var totalPageCount = 0
+            .flatMap({ (lastRequest: GitHubRepositoriesSearchRequest) -> Observable<GitHubRepositoriesSection> in
+                let searchTerm = lastRequest.searchTerm
+                var nextPageUrl = lastRequest.nextPageUrl
                 guard !searchTerm.isEmpty else {
                     return Observable.just(GitHubRepositoriesSection(
-                                            searchTerm: "", numPages: nextPage, totalPages: 0, items: []))
+                                            searchTerm: "",
+                                            nextPageUrl: nextPageUrl,
+                                            isNewSearch: true,
+                                            items: []))
                 }
 
                 return gitHubService.findRepositories(
-                    withSearchTerm: searchTerm, page: nextPage, pageSize: REPOSITORIES_PAGE_SIZE)
+                    withSearchTerm: searchTerm,
+                    nextPageUrl: nextPageUrl,
+                    pageSize: REPOSITORIES_PAGE_SIZE)
                     .map({ (searchResult: GitHubSearchResult) -> [GitHubRepositoryItemType] in
-                        totalPageCount = searchResult.totalCount
+                        nextPageUrl = searchResult.nextPageUrl
                         return searchResult.repositories.map { repo -> GitHubRepositoryItemType in
                             return .repository(repo)
                         }
@@ -97,17 +118,18 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
                     })
                     .asObservable()
                     .map({ (newPageItems: [GitHubRepositoryItemType]) -> GitHubRepositoriesSection in
-                        var repositoryItems = lastSection.items + newPageItems
+                        var repositoryItems = lastRequest.items + newPageItems
+                        let isFirstPage = repositoryItems.count <= REPOSITORIES_PAGE_SIZE
                         repositoryItems.removeAll(where: { (item: GitHubRepositoryItemType) in
                             return item == .nextPageIndicator
                         })
-                        if totalPageCount > nextPage * REPOSITORIES_PAGE_SIZE {
+                        if nextPageUrl != nil {
                             repositoryItems.append(.nextPageIndicator)
                         }
                         return GitHubRepositoriesSection(
                             searchTerm: searchTerm,
-                            numPages: nextPage,
-                            totalPages: totalPageCount,
+                            nextPageUrl: nextPageUrl,
+                            isNewSearch: isFirstPage,
                             items: repositoryItems)
                     })
             })
