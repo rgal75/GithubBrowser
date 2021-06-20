@@ -152,7 +152,7 @@ class RepositoriesViewController: UIViewController, HasStepper {
             .do(onNext: { [weak self] _ in
                 guard let self = self,
                       let section = repositoriesDataSource.sectionModels.first else { return }
-                if section.numPages == 1 && !section.items.isEmpty {
+                if section.isNewSearch && !section.items.isEmpty {
                     self.repositoriesTable.scrollToRow(
                         at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
                 }

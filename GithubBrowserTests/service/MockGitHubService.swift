@@ -14,18 +14,18 @@ class MockGitHubServiceBase: GitHubServiceProtocol {
 
     var invokedFindRepositories = false
     var invokedFindRepositoriesCount = 0
-    var invokedFindRepositoriesParameters: (searchTerm: String, page: Int, pageSize: Int)?
-    var invokedFindRepositoriesParametersList = [(searchTerm: String, page: Int, pageSize: Int)]()
+    var invokedFindRepositoriesParameters: (searchTerm: String, nextPageUrl: URL?, pageSize: Int)?
+    var invokedFindRepositoriesParametersList = [(searchTerm: String, nextPageUrl: URL?, pageSize: Int)]()
     var stubbedFindRepositoriesResult: Single<GitHubSearchResult>!
 
     func findRepositories(
         withSearchTerm searchTerm: String,
-        page: Int,
+        nextPageUrl: URL?,
         pageSize: Int) -> Single<GitHubSearchResult> {
         invokedFindRepositories = true
         invokedFindRepositoriesCount += 1
-        invokedFindRepositoriesParameters = (searchTerm, page, pageSize)
-        invokedFindRepositoriesParametersList.append((searchTerm, page, pageSize))
+        invokedFindRepositoriesParameters = (searchTerm, nextPageUrl, pageSize)
+        invokedFindRepositoriesParametersList.append((searchTerm, nextPageUrl, pageSize))
         return stubbedFindRepositoriesResult
     }
 }
@@ -50,13 +50,17 @@ class MockGitHubService: MockGitHubServiceBase {
     func verifyFindRepositoriesCalled(
         times callCount: Int = 1,
         withSearchTerm expectedSearchTerm: String,
-        page expectedPage: Int,
+        nextPageUrl expectedNextPageUrl: URL?,
         pageSize expectedPageSize: Int,
         file: FileString = #file,
         line: UInt = #line) {
         expect(file: file, line: line, self.invokedFindRepositoriesCount).to(equal(callCount))
         expect(file: file, line: line, self.invokedFindRepositoriesParameters?.searchTerm).to(equal(expectedSearchTerm))
-        expect(file: file, line: line, self.invokedFindRepositoriesParameters?.page).to(equal(expectedPage))
+        if let expectedNextPageUrl = expectedNextPageUrl {
+            expect(file: file, line: line, self.invokedFindRepositoriesParameters?.nextPageUrl).to(equal(expectedNextPageUrl))
+        } else {
+            expect(file: file, line: line, self.invokedFindRepositoriesParameters?.nextPageUrl).to(beNil())
+        }
         expect(file: file, line: line, self.invokedFindRepositoriesParameters?.pageSize).to(equal(expectedPageSize))
     }
 }

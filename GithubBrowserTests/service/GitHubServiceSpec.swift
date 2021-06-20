@@ -15,9 +15,15 @@ import InjectPropertyWrapper
 
 // swiftlint:disable large_tuple
 
-private var searchRepositoriesParameters: (q: String?, perPage: Int?, page: Int?)?
+private var searchRepositoriesParameters: (q: String?, perPage: Int?, pageUrl: URL?)?
 private var expectedSearchRepositoriesResponse: EndpointSampleResponse =
     .networkResponse(502, Data())
+private var expectedSearchRepositoriesHttpResponse: EndpointSampleResponse =
+    .response(HTTPURLResponse(
+                        url: URL(string:"https://any.url")!,
+                        statusCode: 502,
+                        httpVersion: nil,
+                        headerFields: [:])!, Data())
 private let searchRepositoriesSuccessResponseData = """
 {
     "total_count": 308,
@@ -164,26 +170,52 @@ class GitHubServiceSpec: QuickSpec {
             }
 
             context("findRepositories") {
-                it("passes the q, per_page and page parameters to the API") {
-                    // when
-                    sut.findRepositories(withSearchTerm: "theQuery", page: 5, pageSize: 25)
-                        .subscribe().disposed(by: disposeBag)
-                    // then
-                    expect(searchRepositoriesParameters?.q).to(equal("theQuery"))
-                    expect(searchRepositoriesParameters?.page).to(equal(5))
-                    expect(searchRepositoriesParameters?.perPage).to(equal(25))
+                context("when there is no next page URL") {
+                    it("passes the q, per_page and page parameters to the API") {
+                        // when
+                        sut.findRepositories(
+                            withSearchTerm: "theQuery", nextPageUrl: nil, pageSize: 25)
+                            .subscribe().disposed(by: disposeBag)
+                        // then
+                        expect(searchRepositoriesParameters?.q).to(equal("theQuery"))
+                        expect(searchRepositoriesParameters?.perPage).to(equal(25))
+                        expect(searchRepositoriesParameters?.pageUrl).to(beNil())
+                    }
                 }
 
-                context("when the search succeeds") {
+                context("when there is next page URL") {
+                    it("does not pass parameters to the API") {
+                        // when
+                        let nextPageUrl = URL(string: "https://next.page.url")!
+                        sut.findRepositories(
+                            withSearchTerm: "theQuery",
+                            nextPageUrl: nextPageUrl,
+                            pageSize: 25)
+                            .subscribe().disposed(by: disposeBag)
+                        // then
+                        expect(searchRepositoriesParameters?.q).to(beNil())
+                        expect(searchRepositoriesParameters?.perPage).to(beNil())
+                        expect(searchRepositoriesParameters?.pageUrl).to(equal(nextPageUrl))
+                    }
+                }
+
+                context("when the search succeeds with a Link header") {
                     beforeEach {
                         expectedSearchRepositoriesResponse =
-                            .networkResponse(200, searchRepositoriesSuccessResponseData)
+                            .response(HTTPURLResponse(
+                                                url: URL(string: "https://any.url")!,
+                                                statusCode: 200,
+                                                httpVersion: nil,
+                                                headerFields: [
+                                                    "Link": "<https://api.github.com/search/repositories?q=RealmSwift&page=2&per_page=1>; rel=\"next\", <https://api.github.com/search/repositories?q=RealmSwift&page=310&per_page=1>; rel=\"last\""])!,
+                                      searchRepositoriesSuccessResponseData)
                     }
-                    it("emits the search result") {
+                    it("emits the search result with the next page URL") {
                         // when
                         var emittedResult: GitHubSearchResult?
                         var emittedError: Error?
-                        sut.findRepositories(withSearchTerm: "theQuery", page: 5, pageSize: 25)
+                        sut.findRepositories(
+                            withSearchTerm: "theQuery", nextPageUrl: nil, pageSize: 25)
                             .subscribe(
                                 onSuccess: { (result: GitHubSearchResult) in
                                     emittedResult = result
@@ -194,6 +226,7 @@ class GitHubServiceSpec: QuickSpec {
                         // then
                         expect(emittedError).to(beNil())
                         expect(emittedResult?.totalCount).to(equal(308))
+                        expect(emittedResult?.nextPageUrl?.absoluteString).to(equal("https://api.github.com/search/repositories?q=RealmSwift&page=2&per_page=1"))
                         let emittedRepositories = emittedResult?.repositories
                         guard emittedRepositories?.count == 1,
                               let emittedRepository = emittedRepositories?.last else {
@@ -217,7 +250,7 @@ class GitHubServiceSpec: QuickSpec {
                         // when
                         var emittedResult: GitHubSearchResult?
                         var emittedError: Error?
-                        sut.findRepositories(withSearchTerm: "theQuery", page: 5, pageSize: 25)
+                        sut.findRepositories(withSearchTerm: "theQuery", nextPageUrl: nil, pageSize: 25)
                             .subscribe(
                                 onSuccess: { (result: GitHubSearchResult) in
                                     emittedResult = result
@@ -241,7 +274,7 @@ class GitHubServiceSpec: QuickSpec {
                         // when
                         var emittedResult: GitHubSearchResult?
                         var emittedError: Error?
-                        sut.findRepositories(withSearchTerm: "theQuery", page: 5, pageSize: 25)
+                        sut.findRepositories(withSearchTerm: "theQuery", nextPageUrl: nil, pageSize: 25)
                             .subscribe(
                                 onSuccess: { (result: GitHubSearchResult) in
                                     emittedResult = result
@@ -281,8 +314,11 @@ extension GitHubServiceSpec {
         func createStubEndpoint(withTarget target: GitHubApi) -> Endpoint {
             var sampleResponseClosure: Endpoint.SampleResponseClosure
             switch target {
-            case let .searchRepositories(query, perPage, page):
-                searchRepositoriesParameters = (q: query, perPage: perPage, page: page)
+            case let .searchRepositories(query, perPage):
+                searchRepositoriesParameters = (q: query, perPage: perPage, pageUrl: nil)
+                sampleResponseClosure = { expectedSearchRepositoriesResponse }
+            case let .nextPage(pageUrl):
+                searchRepositoriesParameters = (q: nil, perPage: nil, pageUrl: pageUrl)
                 sampleResponseClosure = { expectedSearchRepositoriesResponse }
             }
             return Endpoint(

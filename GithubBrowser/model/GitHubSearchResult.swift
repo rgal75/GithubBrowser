@@ -10,6 +10,7 @@ import Foundation
 struct GitHubSearchResult: Decodable {
     var totalCount: Int
     var repositories: [GitHubRepository]
+    var nextPageUrl: URL?
 
     enum CodingKeys: String, CodingKey {
         case totalCount = "total_count"

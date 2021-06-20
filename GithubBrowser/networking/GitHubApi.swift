@@ -9,32 +9,44 @@ import Foundation
 import Moya
 
 enum GitHubApi {
-    case searchRepositories(query: String, perPage: Int, page: Int)
-    }
+    case searchRepositories(query: String, perPage: Int)
+    case nextPage(pageUrl: URL)
+}
 
 extension GitHubApi: TargetType {
 
-    var baseURL: URL { return URL(string: "https://api.github.com")! }
+    var baseURL: URL {
+        switch self {
+        case .searchRepositories:
+            return URL(string: "https://api.github.com")!
+        case .nextPage(let pageUrl):
+            return pageUrl
+        }
+    }
     var path: String {
         switch self {
         case .searchRepositories:
             return "/search/repositories"
+        case .nextPage:
+            return ""
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .searchRepositories:
+        case .searchRepositories, .nextPage:
             return .get
         }
     }
 
     var task: Task {
         switch self {
-        case let .searchRepositories(query, perPage, page):
+        case let .searchRepositories(query, perPage):
             return .requestParameters(
-                parameters: ["q": query, "per_page": perPage, "page": page],
-                encoding: URLEncoding.default)
+                    parameters: ["q": query, "per_page": perPage, "page": 1],
+                    encoding: URLEncoding.default)
+        case .nextPage:
+            return .requestPlain
         }
     }
 

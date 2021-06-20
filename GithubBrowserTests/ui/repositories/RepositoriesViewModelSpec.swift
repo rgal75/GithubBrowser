@@ -65,9 +65,11 @@ class RepositoriesViewModelSpec: QuickSpec {
                 assembler.dispose()
             }
 
-            func stubSearchResult(withTotalItemCount totalCount: Int, pageCount: Int) -> GitHubSearchResult {
+            func stubSearchResult(
+                numItems: Int,
+                nextPageUrl: URL? = nil) -> GitHubSearchResult {
                 var repositories: [GitHubRepository] = []
-                for i in 0...pageCount-1 {
+                for i in 0...numItems-1 {
                     repositories.append(GitHubRepository(
                                             fullName: "Repo-\(i)",
                                             description: "any",
@@ -76,7 +78,8 @@ class RepositoriesViewModelSpec: QuickSpec {
                                             htmlUrlString: "any",
                                             owner: Owner(login: "any", avatarUrlString: "any")))
                 }
-                return GitHubSearchResult(totalCount: totalCount, repositories: repositories)
+                return GitHubSearchResult(
+                    totalCount: 123, repositories: repositories, nextPageUrl: nextPageUrl)
             }
 
             context("repositories") {
@@ -99,7 +102,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                     }
                     it("starts querying GitHub only if the user stops typing for at least 500 ms") {
                         mockGitHubService.verifyFindRepositoriesCalled(
-                            times: 1, withSearchTerm: "abc", page: 1, pageSize: 15)
+                            times: 1, withSearchTerm: "abc", nextPageUrl: nil, pageSize: 15)
                     }
                 }
 
@@ -113,7 +116,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                     }
                     it("queries GitHub the first 15 matching repositories") {
                         mockGitHubService.verifyFindRepositoriesCalled(
-                            withSearchTerm: "abc", page: 1, pageSize: 15)
+                            withSearchTerm: "abc", nextPageUrl: nil, pageSize: 15)
                     }
                 }
 
@@ -152,7 +155,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                             sut.searchTerm.accept("abc")
                             testScheduler.advanceTo(2001)
                             mockGitHubService.verifyFindRepositoriesCalled(
-                                times: 2, withSearchTerm: "abc", page: 1, pageSize: 15)
+                                times: 2, withSearchTerm: "abc", nextPageUrl: nil, pageSize: 15)
                         }
                     }
                 }
@@ -163,7 +166,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                     """) {
                     beforeEach {
                         mockGitHubService.expectFindRepositoriesToEmit(
-                            stubSearchResult(withTotalItemCount: 5, pageCount: 1))
+                            stubSearchResult(numItems: 1))
                         sut.searchTerm.accept("abc")
                         testScheduler.advanceTo(1000)
                     }
@@ -172,12 +175,13 @@ class RepositoriesViewModelSpec: QuickSpec {
                     }
                     it("emits a section of repositories without next-page-indicator") {
                         guard emittedRepositoriesSectionList.count == 1 else {
-                            return fail("Expected to produce 2 emissions, got \(emittedRepositoriesSectionList.count)")
+                            return fail("Expected to produce 1 emission, got \(emittedRepositoriesSectionList.count)")
                         }
 
                         let theEmittedSection = emittedRepositoriesSectionList[0]
                         expect(theEmittedSection.searchTerm).to(equal("abc"))
-                        expect(theEmittedSection.numPages).to(equal(1))
+                        expect(theEmittedSection.nextPageUrl).to(beNil())
+                        expect(theEmittedSection.isNewSearch).to(beTrue())
                         expect(theEmittedSection.items).to(haveCount(1))
                     }
                 }
@@ -188,7 +192,9 @@ class RepositoriesViewModelSpec: QuickSpec {
                     """) {
                     beforeEach {
                         mockGitHubService.expectFindRepositoriesToEmit(
-                            stubSearchResult(withTotalItemCount: 20, pageCount: 15))
+                            stubSearchResult(
+                                numItems: 15,
+                                nextPageUrl: URL(string: "https://next.page.url")))
                         sut.searchTerm.accept("abc")
                         testScheduler.advanceTo(1000)
                     }
@@ -197,12 +203,12 @@ class RepositoriesViewModelSpec: QuickSpec {
                     }
                     it("emits a section of repositories with a next-page-indicator") {
                         guard emittedRepositoriesSectionList.count == 1 else {
-                            return fail("Expected to produce 2 emissions, got \(emittedRepositoriesSectionList.count)")
+                            return fail("Expected to produce 1 emission, got \(emittedRepositoriesSectionList.count)")
                         }
 
                         let theEmittedSection = emittedRepositoriesSectionList[0]
                         expect(theEmittedSection.searchTerm).to(equal("abc"))
-                        expect(theEmittedSection.numPages).to(equal(1))
+                        expect(theEmittedSection.isNewSearch).to(beTrue())
                         expect(theEmittedSection.items).to(haveCount(16))
                     }
                 }
@@ -211,18 +217,21 @@ class RepositoriesViewModelSpec: QuickSpec {
                 given that the client has already sent a search term,
                 when the client requests to load the next page of the matching repositories
                 """) {
+                    let nextPageUrl = URL(string: "https://next.page.url")!
                     beforeEach {
                         mockGitHubService.expectFindRepositoriesToEmit(
-                            stubSearchResult(withTotalItemCount: 20, pageCount: 15))
+                            stubSearchResult(
+                                numItems: 15,
+                                nextPageUrl: nextPageUrl))
                         sut.searchTerm.accept("abc")
                         testScheduler.advanceTo(1000)
                         mockGitHubService.expectFindRepositoriesToEmit(
-                            stubSearchResult(withTotalItemCount: 20, pageCount: 5))
+                            stubSearchResult(numItems: 5))
                         sut.loadNextPage.accept(())
                     }
-                    it("queries GitHub the next 15 matching repositories") {
+                    it("queries GitHub the next page of repositories") {
                         mockGitHubService.verifyFindRepositoriesCalled(
-                            times: 2, withSearchTerm: "abc", page: 2, pageSize: 15)
+                            times: 2, withSearchTerm: "abc", nextPageUrl: nextPageUrl, pageSize: 15)
                     }
                     it("""
                     emits the first page with 15 items plus the next-page-indicator
@@ -234,12 +243,14 @@ class RepositoriesViewModelSpec: QuickSpec {
 
                         let firstEmission = emittedRepositoriesSectionList[0]
                         expect(firstEmission.searchTerm).to(equal("abc"))
-                        expect(firstEmission.numPages).to(equal(1))
+                        expect(firstEmission.nextPageUrl).to(equal(nextPageUrl))
+                        expect(firstEmission.isNewSearch).to(beTrue())
                         expect(firstEmission.items).to(haveCount(16))
 
                         let secondEmission = emittedRepositoriesSectionList[1]
                         expect(secondEmission.searchTerm).to(equal("abc"))
-                        expect(secondEmission.numPages).to(equal(2))
+                        expect(secondEmission.nextPageUrl).to(beNil())
+                        expect(secondEmission.isNewSearch).to(beFalse())
                         expect(secondEmission.items).to(haveCount(20))
                     }
                 }
