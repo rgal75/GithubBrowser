@@ -1,18 +1,18 @@
 PODS:
-  - Alamofire (5.4.3)
+  - Alamofire (5.4.4)
   - BartyCrouch (4.5.0)
   - CocoaLumberjack/Core (3.7.2)
   - CocoaLumberjack/Swift (3.7.2):
     - CocoaLumberjack/Core
   - Differentiator (5.0.0)
   - InjectPropertyWrapper (0.3.0)
-  - Kingfisher (6.3.0)
-  - Moya/Core (15.0.0-alpha.1):
+  - Kingfisher (7.1.1)
+  - Moya/Core (15.0.0):
     - Alamofire (~> 5.0)
-  - Moya/RxSwift (15.0.0-alpha.1):
+  - Moya/RxSwift (15.0.0):
     - Moya/Core
     - RxSwift (~> 6.0)
-  - Nimble (9.2.0)
+  - Nimble (9.2.1)
   - Quick (3.1.2)
   - RxBlocking (6.2.0):
     - RxSwift (= 6.2.0)
@@ -23,7 +23,7 @@ PODS:
     - Differentiator (~> 5.0)
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
-  - RxFlow (2.12.2):
+  - RxFlow (2.12.4):
     - RxCocoa (>= 6.0.0)
     - RxSwift (>= 6.0.0)
   - RxRelay (6.2.0):
@@ -40,7 +40,7 @@ PODS:
   - RxTest (6.2.0):
     - RxSwift (= 6.2.0)
   - SwiftGen (6.4.0)
-  - SwiftLint (0.43.1)
+  - SwiftLint (0.45.0)
   - Swinject (2.6.0)
   - SwinjectStoryboard (2.2.0):
     - Swinject (~> 2.6)
@@ -51,8 +51,9 @@ DEPENDENCIES:
   - CocoaLumberjack/Swift (= 3.7.2)
   - InjectPropertyWrapper
   - Kingfisher
-  - Moya/RxSwift (from `https://github.com/peagasilva/Moya.git`, branch `rxswift-6`)
+  - Moya/RxSwift (= 15.0.0)
   - Nimble (~> 9.0)
+  - Nimble (~> 9.2.1)
   - Quick (~> 3.1)
   - RxBlocking (~> 6.0)
   - RxCocoa (~> 6.0)
@@ -75,6 +76,7 @@ SPEC REPOS:
     - Differentiator
     - InjectPropertyWrapper
     - Kingfisher
+    - Moya
     - Nimble
     - Quick
     - RxBlocking
@@ -91,40 +93,30 @@ SPEC REPOS:
     - SwinjectStoryboard
     - ViewControllerPresentationSpy
 
-EXTERNAL SOURCES:
-  Moya:
-    :branch: rxswift-6
-    :git: https://github.com/peagasilva/Moya.git
-
-CHECKOUT OPTIONS:
-  Moya:
-    :commit: 6bd42b940b32fe2939aefe610430f280aeb24a8d
-    :git: https://github.com/peagasilva/Moya.git
-
 SPEC CHECKSUMS:
-  Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
+  Alamofire: f3b09a368f1582ab751b3fff5460276e0d2cf5c9
   BartyCrouch: 1c4b60efab0850091e5224cf69afe856f4fe96cd
   CocoaLumberjack: b7e05132ff94f6ae4dfa9d5bce9141893a21d9da
   Differentiator: e8497ceab83c1b10ca233716d547b9af21b9344d
   InjectPropertyWrapper: b8758f7f8f46f0012804a7bf1037ef8f713f098c
-  Kingfisher: 6c3df386db71d82c0817a429d2c9421a77396529
-  Moya: 1a04c3836ce1cd20430c176d1318436cbd1371a1
-  Nimble: 4f4a345c80b503b3ea13606a4f98405974ee4d0b
+  Kingfisher: f738f9c4a3415823b8e2985d10aa2d6a9f37bc4d
+  Moya: 138f0573e53411fb3dc17016add0b748dfbd78ee
+  Nimble: e7e615c0335ee4bf5b0d786685451e62746117d5
   Quick: 60f0ea3b8e0cfc0df3259a5c06a238ad8b3c46e0
   RxBlocking: 0b29f7d2079109a8de49c411381bed7c33ef1eeb
   RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
   RxDataSources: aa47cc1ed6c500fa0dfecac5c979b723542d79cf
-  RxFlow: fa434215aca391d10d4d5048c0a035c9502b3666
+  RxFlow: 03a73c83fb8f183107074b40ab2544c668583f73
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
   RxSwiftExt: d61c4b9b06e0a448041b1c659e0f1b5c5a035afc
   RxTest: 0c692fa672b694373ba86d2b00033595297a2831
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
-  SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
+  SwiftLint: e5c7f1fba68eccfc51509d5b2ce1699f5502e0c7
   Swinject: 48a96cda93633cf2860697b4ce76ab5db9ebaca2
   SwinjectStoryboard: 32512ef16c2b0ff5b8f823b23539c4a50f6d3383
   ViewControllerPresentationSpy: 806584e0413860ee451ec5e513ed4661c39a3727
 
-PODFILE CHECKSUM: 12418c95e3bb36bab18faca5f610595a4259d782
+PODFILE CHECKSUM: a0157068a94a46edcdb37dc385d8592396a17e0b
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2

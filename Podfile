@@ -16,14 +16,14 @@ target 'GithubBrowser' do
   pod 'RxCocoa', '~> 6.0'
   pod 'RxSwiftExt', '~> 6.0'
   pod 'RxDataSources', '~> 5.0'
-  pod 'Moya/RxSwift', :git => 'https://github.com/peagasilva/Moya.git', :branch => 'rxswift-6' #'14.0.0'
+  pod 'Moya/RxSwift', '15.0.0'
   pod 'RxFlow', '~> 2.12'
   pod 'Kingfisher'
 
   target 'GithubBrowserTests' do
     inherit! :search_paths
     # Pods for testing
-    pod 'Nimble', '~> 9.0'
+    pod 'Nimble', '~> 9.2.1'
     pod 'Quick', '~> 3.1'
     pod 'RxBlocking', '~> 6.0'
     pod 'RxTest', '~> 6.0'
