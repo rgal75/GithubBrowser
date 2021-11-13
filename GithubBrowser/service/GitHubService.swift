@@ -11,6 +11,7 @@ import RxSwift
 import Moya
 import InjectPropertyWrapper
 
+//sourcery: AutoMockable
 protocol GitHubServiceProtocol {
     func findRepositories(
         withSearchTerm searchTerm: String,

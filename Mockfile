@@ -1,0 +1,21 @@
+sourceryCommand: null
+sourceryTemplate: null
+GithubBrowserTests:
+  sources:
+    include:
+    - ./GithubBrowser
+    - ./Pods/RxFlow/RxFlow/Stepper.swift
+  output: ./GithubBrowserTests/Mock.generated.swift
+  targets:
+  - GithubBrowserTests
+  testable:
+  - GithubBrowser
+  import:
+  - CocoaLumberjack
+  - Foundation
+  - InjectPropertyWrapper
+  - Moya
+  - RxFlow
+  - RxRelay
+  - RxSwift
+  - RxSwiftExt

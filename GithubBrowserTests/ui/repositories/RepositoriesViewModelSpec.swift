@@ -15,6 +15,7 @@ import RxSwift
 import InjectPropertyWrapper
 import RxFlow
 import RxTest
+import SwiftyMocky
 
 // swiftlint:disable file_length
 class RepositoriesViewModelSpec: QuickSpec {
@@ -23,7 +24,7 @@ class RepositoriesViewModelSpec: QuickSpec {
     override func spec() {
         describe("RepositoriesViewModel") {
             var sut: RepositoriesViewModel!
-            var mockGitHubService: MockGitHubService!
+            var mockGitHubService: GitHubServiceProtocolMock!
             var testScheduler: TestScheduler!
             var disposeBag: DisposeBag!
             var assembler: MainAssembler!
@@ -31,14 +32,28 @@ class RepositoriesViewModelSpec: QuickSpec {
             var emittedRepositoriesSectionList: [GitHubRepositoriesSection] = []
             var emittedFlowSteps: [AppStep] = []
             var emittedShowLoadingValues: [Bool] = []
-            
+
+            var stubbedFindRepositoriesResultSubject: ReplaySubject<GitHubSearchResult>!
+            var stubbedFindRepositoriesResult: Single<GitHubSearchResult>!
+
             beforeEach {
                 assembler = MainAssembler.create(withAssembly: TestAssembly())
                 InjectSettings.resolver = assembler.container
                 sut = assembler.resolver.resolve(RepositoriesViewModel.self)
-                mockGitHubService = assembler.resolver.resolve(GitHubServiceProtocol.self) as? MockGitHubService
+                mockGitHubService = assembler.resolver.resolve(GitHubServiceProtocol.self) as? GitHubServiceProtocolMock
                 testScheduler = assembler.resolver.resolve(SchedulerType.self) as? TestScheduler
                 disposeBag = DisposeBag()
+
+                stubbedFindRepositoriesResultSubject = ReplaySubject<GitHubSearchResult>.create(bufferSize: 1)
+                stubbedFindRepositoriesResult = stubbedFindRepositoriesResultSubject.take(1).asSingle()
+
+                Given(
+                    mockGitHubService,
+                    .findRepositories(
+                        withSearchTerm: .any,
+                        nextPageUrl: .any,
+                        pageSize: .any,
+                        willReturn: stubbedFindRepositoriesResult))
 
                 emittedRepositoriesSectionList.removeAll()
                 sut.repositories.subscribe(onNext: { (section: GitHubRepositoriesSection) in
@@ -101,8 +116,10 @@ class RepositoriesViewModelSpec: QuickSpec {
                         testScheduler.advanceTo(601)
                     }
                     it("starts querying GitHub only if the user stops typing for at least 500 ms") {
-                        mockGitHubService.verifyFindRepositoriesCalled(
-                            times: 1, withSearchTerm: "abc", nextPageUrl: nil, pageSize: 15)
+                        Verify(mockGitHubService, 1, .findRepositories(
+                            withSearchTerm: .value("abc"),
+                            nextPageUrl: nil,
+                            pageSize: .value(15)))
                     }
                 }
 
@@ -115,8 +132,10 @@ class RepositoriesViewModelSpec: QuickSpec {
                         expect(emittedShowLoadingValues).to(equal([true]))
                     }
                     it("queries GitHub the first 15 matching repositories") {
-                        mockGitHubService.verifyFindRepositoriesCalled(
-                            withSearchTerm: "abc", nextPageUrl: nil, pageSize: 15)
+                        Verify(mockGitHubService, 1, .findRepositories(
+                            withSearchTerm: .value("abc"),
+                            nextPageUrl: nil,
+                            pageSize: .value(15)))
                     }
                 }
 
@@ -126,8 +145,8 @@ class RepositoriesViewModelSpec: QuickSpec {
                         message: "An unexpected error has occurred.",
                         actions: [AlertAction(title: "OK", style: .cancel)])
                     beforeEach {
-                        mockGitHubService.expectFindRepositoriesToFail(
-                            withError: GitHubBrowserError.unexpectedError)
+                        stubbedFindRepositoriesResultSubject
+                            .onError(GitHubBrowserError.unexpectedError)
                         sut.searchTerm.accept("abc")
                         testScheduler.advanceTo(1000)
                     }
@@ -154,8 +173,10 @@ class RepositoriesViewModelSpec: QuickSpec {
                         it("continues listening search requests") {
                             sut.searchTerm.accept("abc")
                             testScheduler.advanceTo(2001)
-                            mockGitHubService.verifyFindRepositoriesCalled(
-                                times: 2, withSearchTerm: "abc", nextPageUrl: nil, pageSize: 15)
+                            Verify(mockGitHubService, .findRepositories(
+                                withSearchTerm: .value("abc"),
+                                nextPageUrl: nil,
+                                pageSize: .value(15)))
                         }
                     }
                 }
@@ -165,8 +186,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                     and the result fits in one page
                     """) {
                     beforeEach {
-                        mockGitHubService.expectFindRepositoriesToEmit(
-                            stubSearchResult(numItems: 1))
+                        stubbedFindRepositoriesResultSubject.onNext(stubSearchResult(numItems: 1))
                         sut.searchTerm.accept("abc")
                         testScheduler.advanceTo(1000)
                     }
@@ -191,7 +211,7 @@ class RepositoriesViewModelSpec: QuickSpec {
                     and the result does not fit in one page
                     """) {
                     beforeEach {
-                        mockGitHubService.expectFindRepositoriesToEmit(
+                        stubbedFindRepositoriesResultSubject.onNext(
                             stubSearchResult(
                                 numItems: 15,
                                 nextPageUrl: URL(string: "https://next.page.url")))
@@ -219,19 +239,24 @@ class RepositoriesViewModelSpec: QuickSpec {
                 """) {
                     let nextPageUrl = URL(string: "https://next.page.url")!
                     beforeEach {
-                        mockGitHubService.expectFindRepositoriesToEmit(
+                        stubbedFindRepositoriesResultSubject.onNext(
                             stubSearchResult(
                                 numItems: 15,
                                 nextPageUrl: nextPageUrl))
                         sut.searchTerm.accept("abc")
                         testScheduler.advanceTo(1000)
-                        mockGitHubService.expectFindRepositoriesToEmit(
-                            stubSearchResult(numItems: 5))
+                        stubbedFindRepositoriesResultSubject.onNext(stubSearchResult(numItems: 5))
                         sut.loadNextPage.accept(())
                     }
                     it("queries GitHub the next page of repositories") {
-                        mockGitHubService.verifyFindRepositoriesCalled(
-                            times: 2, withSearchTerm: "abc", nextPageUrl: nextPageUrl, pageSize: 15)
+                        Verify(mockGitHubService, 1, .findRepositories(
+                            withSearchTerm: .value("abc"),
+                            nextPageUrl: nil,
+                            pageSize: .value(15)))
+                        Verify(mockGitHubService, 1, .findRepositories(
+                            withSearchTerm: .value("abc"),
+                            nextPageUrl: .value(nextPageUrl),
+                            pageSize: .value(15)))
                     }
                     it("""
                     emits the first page with 15 items plus the next-page-indicator
@@ -284,7 +309,7 @@ extension RepositoriesViewModelSpec {
             }.inObjectScope(.transient)
 
             container.register(GitHubServiceProtocol.self) { _ in
-                return MockGitHubService()
+                return GitHubServiceProtocolMock()
             }.inObjectScope(.container)
 
             container.register(SchedulerType.self) { _ in

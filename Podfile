@@ -24,10 +24,11 @@ target 'GithubBrowser' do
     inherit! :search_paths
     # Pods for testing
     pod 'Nimble', '~> 9.2.1'
-    pod 'Quick', '~> 3.1'
+    pod 'Quick', '~> 4.0.0'
     pod 'RxBlocking', '~> 6.0'
     pod 'RxTest', '~> 6.0'
     pod 'ViewControllerPresentationSpy', '~> 5.0'
+    pod "SwiftyMocky"
   end
 
   target 'GithubBrowserUITests' do
