@@ -39,7 +39,7 @@ struct GitHubRepositoriesSection: GitHubRepositoriesSearchRequest {
     var items: [GitHubRepositoryItemType]
 }
 
-//sourcery: AutoMockable
+// sourcery: AutoMockable
 protocol RepositoriesViewModelProtocol: Stepper {
     // MARK: - Input
     var searchTerm: PublishRelay<String> { get }

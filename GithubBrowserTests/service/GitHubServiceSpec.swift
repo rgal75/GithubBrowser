@@ -20,7 +20,7 @@ private var expectedSearchRepositoriesResponse: EndpointSampleResponse =
     .networkResponse(502, Data())
 private var expectedSearchRepositoriesHttpResponse: EndpointSampleResponse =
     .response(HTTPURLResponse(
-                        url: URL(string:"https://any.url")!,
+                        url: URL(string: "https://any.url")!,
                         statusCode: 502,
                         httpVersion: nil,
                         headerFields: [:])!, Data())
