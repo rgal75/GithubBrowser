@@ -25,6 +25,7 @@ target 'GithubBrowser' do
     # Pods for testing
     pod 'Nimble', '~> 9.2.1'
     pod 'Quick', '~> 3.1'
+    pod 'MockingbirdFramework', '~> 0.18'
     pod 'RxBlocking', '~> 6.0'
     pod 'RxTest', '~> 6.0'
     pod 'ViewControllerPresentationSpy', '~> 5.0'

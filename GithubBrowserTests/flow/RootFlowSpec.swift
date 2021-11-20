@@ -9,11 +9,13 @@
 import Nimble
 import Quick
 import RxSwift
+import RxRelay
 import Swinject
 import RxFlow
 import InjectPropertyWrapper
 import ViewControllerPresentationSpy
 import SafariServices
+import Mockingbird
 
 // swiftlint:disable file_length
 class RootFlowSpec: QuickSpec {
@@ -120,7 +122,11 @@ extension RootFlowSpec {
             }.inObjectScope(.transient)
 
             container.register(RepositoriesViewModelProtocol.self) { _ in
-                return MockRepositoriesViewModel()
+                let viewModel = mock(RepositoriesViewModelProtocol.self)
+                given(viewModel.steps).willReturn(PublishRelay<Step>())
+                given(viewModel.initialStep).willReturn(RxFlowStep.home)
+                return viewModel
+
             }.inObjectScope(.transient)
         }
     }

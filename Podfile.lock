@@ -7,6 +7,7 @@ PODS:
   - Differentiator (5.0.0)
   - InjectPropertyWrapper (0.3.0)
   - Kingfisher (7.1.1)
+  - MockingbirdFramework (0.18.1)
   - Moya/Core (15.0.0):
     - Alamofire (~> 5.0)
   - Moya/RxSwift (15.0.0):
@@ -51,6 +52,7 @@ DEPENDENCIES:
   - CocoaLumberjack/Swift (= 3.7.2)
   - InjectPropertyWrapper
   - Kingfisher
+  - MockingbirdFramework (~> 0.18)
   - Moya/RxSwift (= 15.0.0)
   - Nimble (~> 9.0)
   - Nimble (~> 9.2.1)
@@ -76,6 +78,7 @@ SPEC REPOS:
     - Differentiator
     - InjectPropertyWrapper
     - Kingfisher
+    - MockingbirdFramework
     - Moya
     - Nimble
     - Quick
@@ -100,6 +103,7 @@ SPEC CHECKSUMS:
   Differentiator: e8497ceab83c1b10ca233716d547b9af21b9344d
   InjectPropertyWrapper: b8758f7f8f46f0012804a7bf1037ef8f713f098c
   Kingfisher: f738f9c4a3415823b8e2985d10aa2d6a9f37bc4d
+  MockingbirdFramework: f68dfb16f5b8bff2ebb6e8fefe565f8a1d573cc7
   Moya: 138f0573e53411fb3dc17016add0b748dfbd78ee
   Nimble: e7e615c0335ee4bf5b0d786685451e62746117d5
   Quick: 60f0ea3b8e0cfc0df3259a5c06a238ad8b3c46e0
@@ -117,6 +121,6 @@ SPEC CHECKSUMS:
   SwinjectStoryboard: 32512ef16c2b0ff5b8f823b23539c4a50f6d3383
   ViewControllerPresentationSpy: 806584e0413860ee451ec5e513ed4661c39a3727
 
-PODFILE CHECKSUM: a0157068a94a46edcdb37dc385d8592396a17e0b
+PODFILE CHECKSUM: 1e28e97f464998ea688dcf6fd424e2b2036c4448
 
 COCOAPODS: 1.11.2

@@ -14,6 +14,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import InjectPropertyWrapper
+import Mockingbird
 
 // swiftlint:disable file_length function_parameter_count
 class RepositoriesViewControllerSpec: QuickSpec {
@@ -22,14 +23,36 @@ class RepositoriesViewControllerSpec: QuickSpec {
     override func spec() {
         describe("RepositoriesViewController") {
             var sut: RepositoriesViewController!
-            var mockViewModel: MockRepositoriesViewModel!
+            var mockViewModel: RepositoriesViewModelProtocolMock!
             var assembler: MainAssembler!
+
+            var searchTermSpy: ObservableSpy<PublishRelay<String>>!
+            var repositorySelectedSpy: ObservableSpy<PublishRelay<GitHubRepository>>!
+            var loadNextPageSpy: ObservableSpy<PublishRelay<Void>>!
+
+            var stubbedRepositories: StubObservable<GitHubRepositoriesSection>!
+            var stubbedShowLoading: StubObservable<Bool>!
             
             beforeEach {
                 assembler = MainAssembler.create(withAssembly: TestAssembly())
                 InjectSettings.resolver = assembler.container
                 sut = StoryboardScene.RepositoriesViewController.repositoriesViewController.instantiate()
-                mockViewModel = sut.viewModel as? MockRepositoriesViewModel
+                mockViewModel = sut.viewModel as? RepositoriesViewModelProtocolMock
+
+                searchTermSpy = ObservableSpy(with: PublishRelay<String>())
+                given(mockViewModel.searchTerm).willReturn(searchTermSpy.observable)
+
+                loadNextPageSpy = ObservableSpy(with: PublishRelay<Void>())
+                given(mockViewModel.loadNextPage).willReturn(loadNextPageSpy.observable)
+
+                repositorySelectedSpy = ObservableSpy(with: PublishRelay<GitHubRepository>())
+                given(mockViewModel.repositorySelected).willReturn(repositorySelectedSpy.observable)
+
+                stubbedRepositories = StubObservable<GitHubRepositoriesSection>()
+                given(mockViewModel.repositories).willReturn(stubbedRepositories.observable)
+
+                stubbedShowLoading = StubObservable<Bool>()
+                given(mockViewModel.showLoading).willReturn(stubbedShowLoading.observable)
             }
             
             afterEach {
@@ -122,25 +145,23 @@ class RepositoriesViewControllerSpec: QuickSpec {
                     expect(sut.loadingIndicator.isHidden).to(beTrue())
                 }
                 it("sends an empty search term to the view model") {
-                    mockViewModel.verifySearchTermTriggered(
-                        withSearchTerm: "")
+                    searchTermSpy.verifyTriggered(times: 1, with: "")
 
                 }
                 context("when the user enters a search term") {
                     beforeEach {
-                        mockViewModel.resetVerifications()
+                        searchTermSpy.reset()
                         sut.searchBar.text = "any"
                         sut.searchBar.delegate?.searchBar?(sut.searchBar, textDidChange: "any")
                     }
                     it("sends the search term to the view model") {
-                        mockViewModel.verifySearchTermTriggered(
-                            withSearchTerm: "any")
+                        searchTermSpy.verifyTriggered(times: 1, with: "any")
                     }
                 }
 
                 context("when the view model emits an empty list of repositories") {
                     beforeEach {
-                        mockViewModel.expectRepositoriesToEmit(
+                        stubbedRepositories.emit(
                             GitHubRepositoriesSection(
                                 searchTerm: "a",
                                 nextPageUrl: nil,
@@ -150,7 +171,7 @@ class RepositoriesViewControllerSpec: QuickSpec {
                                 ]))
                         verifyRepositoriesTableRowCountIs(1)
                         // when
-                        mockViewModel.expectRepositoriesToEmit(
+                        stubbedRepositories.emit(
                             GitHubRepositoriesSection(
                                 searchTerm: "ab",
                                 nextPageUrl: nil,
@@ -175,7 +196,7 @@ class RepositoriesViewControllerSpec: QuickSpec {
                             stargazersCount: 1,
                             htmlUrlString: "Repo-1-url",
                             owner: Owner(login: "Repo-1-owner", avatarUrlString: "Repo-1-avatar-url"))
-                        mockViewModel.expectRepositoriesToEmit(
+                        stubbedRepositories.emit(
                             GitHubRepositoriesSection(
                                 searchTerm: "any",
                                 nextPageUrl: nil,
@@ -220,8 +241,7 @@ class RepositoriesViewControllerSpec: QuickSpec {
                                 sut.repositoriesTable, didSelectRowAt: IndexPath(row: 0, section: 0))
                         }
                         it("sends the selected repository the view model") {
-                            mockViewModel.verifyRepositorySelectedTriggered(
-                                withRepository: repository1)
+                            repositorySelectedSpy.verifyTriggered(times: 1, with: repository1)
                         }
                     }
                 }
@@ -240,7 +260,7 @@ class RepositoriesViewControllerSpec: QuickSpec {
                         expect(nextPageIndicatorCell.loadingIndicator.isAnimating).to(beTrue())
                     }
                     it("requests the view model to load the next page") {
-                        mockViewModel.verifyLoadNextPageTriggered()
+                        loadNextPageSpy.verifyTriggered(times: 1)
                     }
                 }
 
@@ -253,7 +273,7 @@ class RepositoriesViewControllerSpec: QuickSpec {
                         sut.loadingIndicator.isHidden = true
                         sut.loadingIndicator.startAnimating()
                         // when
-                        mockViewModel.expectShowLoadingToEmit(true)
+                        stubbedShowLoading.emit(true)
                     }
                     it("shows the loading indicator and hides the empty state message") {
                         expect(sut.loadingIndicator.isHidden).to(beFalse())
@@ -271,7 +291,7 @@ class RepositoriesViewControllerSpec: QuickSpec {
                         sut.loadingIndicator.isHidden = false
                         sut.loadingIndicator.stopAnimating()
                         // when
-                        mockViewModel.expectShowLoadingToEmit(false)
+                        stubbedShowLoading.emit(false)
                     }
                     it("hides the loading indicator and shows the emtpy state message") {
                         expect(sut.loadingIndicator.isHidden).to(beTrue())
@@ -289,8 +309,7 @@ extension RepositoriesViewControllerSpec {
     class TestAssembly: Assembly {
         func assemble(container: Container) {
             container.register(RepositoriesViewModelProtocol.self) { _ in
-                let instance = MockRepositoriesViewModel()
-                return instance
+                return mock(RepositoriesViewModelProtocol.self)
             }.inObjectScope(.transient)
         }
     }
